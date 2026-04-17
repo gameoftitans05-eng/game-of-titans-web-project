@@ -1,0 +1,514 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO -->
+    <title>{% block title %}Game of Titans{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{% endblock %}">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="{% block og_url %}https://gameoftitans.in/{% endblock %}"/>
+    <meta property="og:title" content="{% block og_title %}Game of Titans{% endblock %}"/>
+    <meta property="og:description" content="{% block og_meta_description %}{% endblock %}"/>
+    <meta property="og:image" content="https://gameoftitans.in/static/images/og-image.jpg"/>
+    <meta property="og:image:width" content="1200"/>
+    <meta property="og:image:height" content="630"/>
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="{% block twitter_title %}Game of Titans{% endblock %}"/>
+    <meta name="twitter:description" content="{% block twitter_meta_description %}{% endblock %}"/>
+    <meta name="twitter:image" content="https://gameoftitans.in/static/images/og-image.jpg"/>
+
+    <!-- Scripts -->
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+
+    <link rel="icon" href="{% static 'favicon/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+
+<main class="pt-24">
+    {% block content %}
+    {% endblock content %}
+</main>
+
+{% include 'partials/footer.html' %}
+{% include 'partials/navbar.html' %}
+
+</body>
+
+<script>
+    // Initialize Lucide icons
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+
+    // Close Success Modal
+document.getElementById('close-modal')?.addEventListener('click', () => {
+    document.getElementById('success-modal').classList.add('hidden');
+});
+
+// Optional: Close when clicking outside the modal
+document.getElementById('success-modal')?.addEventListener('click', (e) => {
+    if (e.target === document.getElementById('success-modal')) {
+        document.getElementById('success-modal').classList.add('hidden');
+    }
+});
+
+
+    // Mobile Menu Toggle
+    document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenu.classList.toggle('hidden');
+
+        // Re-initialize icons after menu toggle
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    });
+
+    // Countdown Timer
+    function updateCountdown() {
+        const eventDate = new Date('2026-03-28T09:00:00+05:30');
+        const now = new Date();
+        const diff = eventDate - now;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+        const countdownEl = document.getElementById('countdown-days');
+        if (countdownEl && days >= 0) {
+            countdownEl.textContent = days;
+        }
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 60000); // Update every minute
+
+    // Animate Counters
+    function animateCounter(id, target, duration = 2000) {
+        const element = document.getElementById(id);
+        if (!element) return;
+
+        const start = 0;
+        const increment = target / (duration / 16);
+        let current = start;
+
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                element.textContent = target;
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.floor(current);
+            }
+        }, 16);
+    }
+
+    // Dynamic Stats Fetching
+    let gymsCount = 0;
+    let membersCount = 0;
+
+    async function loadStats() {
+        try {
+            const res = await fetch('/api/v1/stats/');
+            if (!res.ok) throw new Error('Failed to fetch stats');
+            const data = await res.json();
+            gymsCount = data.gyms || 0;
+            membersCount = data.members || 0;
+
+            console.log('check: ', gymsCount, membersCount);
+            startStatsObserver();
+
+        } catch (err) {
+            console.error('Stats fetch error:', err);
+            gymsCount = 0;
+            membersCount = 0;
+            startStatsObserver();
+        }
+    }
+
+    // Load stats immediately on page load
+    loadStats();
+
+    function startStatsObserver() {
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter('gyms-counter', gymsCount);
+                    animateCounter('members-counter', membersCount);
+                    statsObserver.disconnect();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const statsSection = document.querySelector('.stats-card');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+    }
+
+    // Hero Reveal Animation
+    document.addEventListener('DOMContentLoaded', () => {
+        const heroItems = document.querySelectorAll('.hero-reveal-item');
+        heroItems.forEach(item => {
+            setTimeout(() => {
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, parseInt(item.style.animationDelay) * 1000 || 0);
+        });
+    });
+
+    // Stats Cards Reveal
+    const cardsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.stats-card, .registration-card, .guest-card').forEach(card => {
+        cardsObserver.observe(card);
+    });
+
+    // Click Ripple Effect
+    document.addEventListener('click', (e) => {
+        const ripple = document.createElement('div');
+        ripple.className = 'ripple';
+        ripple.style.left = e.clientX + 'px';
+        ripple.style.top = e.clientY + 'px';
+        document.body.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 1000);
+    });
+
+    // ────────────────────────────────────────────────
+    // ADD THIS FUNCTION HERE
+    // ────────────────────────────────────────────────
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    document.getElementById('gym-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        console.log(formData);
+        console.log(data);
+        try {
+            const res = await fetch('/api/v1/register-gym/', {
+                method: 'POST',
+                body: new URLSearchParams(data),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': getCookie('csrftoken') }
+            });
+
+            const result = await res.json();
+
+            if (result.success) {
+                document.getElementById('gym-id-code').textContent = result.gym_id;
+                document.getElementById('gym-id-display').classList.remove('hidden');
+                document.getElementById('gym-id-display').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                alert(result.error || "Gym registration failed");
+            }
+        } catch (err) {
+        console.log(err);
+            alert("Network error");
+        }
+    });
+
+
+
+    // Copy Gym ID
+    document.getElementById('copy-gym-id')?.addEventListener('click', () => {
+        const gymId = document.getElementById('gym-id-code').textContent;
+        navigator.clipboard.writeText(gymId).then(() => {
+            const btn = document.getElementById('copy-gym-id');
+            const originalText = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = originalText; }, 2000);
+        });
+    });
+
+
+    // Wrap in IIFE to protect from global variable pollution
+(async function() {
+    async function loadActiveEvents() {
+        const select = document.getElementById('member-event');
+        if (!select) return;
+
+        try {
+            const response = await fetch('/api/v1/active-events/', {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const events = await response.json();
+
+            select.innerHTML = '<option value="" disabled selected>Select Event</option>';
+
+            if (events.length === 0) {
+                select.innerHTML += '<option value="" disabled>No active events available</option>';
+            } else {
+                events.forEach(event => {
+                    const option = document.createElement('option');
+                    option.value = event.id;
+                    option.textContent = `${event.name} - ${event.schedule_on ? new Date(event.schedule_on).toLocaleDateString('en-IN') : 'TBD'} (₹${event.participation_amount || 'TBD'})`;
+                    select.appendChild(option);
+                });
+            }
+        } catch (err) {
+            console.error('Failed to load events:', err);
+            select.innerHTML = '<option value="" disabled>Error loading events</option>';
+        }
+    }
+
+    // Run when page is ready
+    await loadActiveEvents();
+})();
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const registerTypeSelect = document.getElementById('member-register-type');
+        const gymIdContainer = document.getElementById('gym-id-container');
+        const gymIdInput = document.getElementById('member-gym-id');
+
+        if (registerTypeSelect && gymIdContainer && gymIdInput) {
+            registerTypeSelect.addEventListener('change', (e) => {
+                if (e.target.value === 'gym_member') {
+                    gymIdContainer.style.display = 'block';
+                    gymIdInput.required = true;
+                } else {
+                    gymIdContainer.style.display = 'none';
+                    gymIdInput.required = false;
+                    gymIdInput.value = ''; // optional: clear value when hidden
+                }
+            });
+        }
+    });
+
+
+document.getElementById('member-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const payload = {
+        gym_id: document.getElementById('member-gym-id')?.value.trim().toUpperCase(),
+        event_id: document.getElementById('member-event')?.value,
+        gender: document.getElementById('member-gender')?.value,
+        name: document.getElementById('member-name')?.value.trim(),
+        email: document.getElementById('member-email')?.value.trim(),
+        phone: document.getElementById('member-phone')?.value.trim(),
+        refer_code: document.getElementById('member-refer-code')?.value.trim(),
+        registration_type: document.getElementById('member-register-type')?.value,
+        payment_type: "UPI"
+    };
+
+    if (!payload.registration_type || !payload.event_id || !payload.name ||
+    !payload.email || !payload.phone || !payload.gender) {
+    alert("Please fill all required fields");
+    return;
+}
+
+
+    // Show loading state
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.innerHTML = '<span>Loading...</span>';
+
+    try {
+        const response = await fetch('/api/v1/initiate-participation/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        console.log("Backend response:", data);
+
+        if (!data.success) {
+            alert(data.error || "Registration failed");
+            btn.disabled = false;
+            btn.innerHTML = '<span>Pay & Register</span><i data-lucide="credit-card" class="size-5"></i>';
+            return;
+        }
+
+        // Wait for Cashfree to be ready (up to 5 seconds)
+        let attempts = 0;
+        const maxAttempts = 50; // ~5 seconds (100ms interval)
+        const waitForSdk = () => new Promise((resolve, reject) => {
+            const interval = setInterval(() => {
+                attempts++;
+                if (typeof Cashfree !== 'undefined') {
+                    clearInterval(interval);
+                    resolve();
+                } else if (attempts >= maxAttempts) {
+                    clearInterval(interval);
+                    reject(new Error("Cashfree SDK timeout"));
+                }
+            }, 100);
+        });
+
+        await waitForSdk();
+
+        console.log("Cashfree SDK ready");
+
+        const cashfree = Cashfree({ mode: "sandbox" });
+
+        cashfree.checkout({
+            paymentSessionId: data.payment_session_id,
+            redirectTarget: "_self"
+        });
+
+    } catch (err) {
+        console.error("Error:", err);
+        alert("Something went wrong: " + (err.message || "Unknown error"));
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Pay & Register</span><i data-lucide="credit-card" class="size-5"></i>';
+    }
+});
+
+    // Member Registration (Payment Simulation)
+    document.getElementById('member-form1').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // Generate Tracking ID
+        const trackingId = 'TXN-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+        document.getElementById('tracking-id').textContent = trackingId;
+
+        // Show Success Modal
+        document.getElementById('success-modal').classList.remove('hidden');
+    });
+
+    // Close Modal
+    document.getElementById('close-modal')?.addEventListener('click', () => {
+        document.getElementById('success-modal').classList.add('hidden');
+    });
+
+    // Copy Tracking ID
+    document.getElementById('copy-tracking-id')?.addEventListener('click', () => {
+        const trackingId = document.getElementById('tracking-id').textContent;
+        navigator.clipboard.writeText(trackingId).then(() => {
+            const btn = document.getElementById('copy-tracking-id');
+            const originalText = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = originalText; }, 2000);
+        });
+    });
+
+    // Smooth Scroll for CTA
+    document.getElementById('hero-cta')?.addEventListener('click', () => {
+        document.getElementById('registration-section').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Floating Elements Animation Trigger
+    let scrolled = false;
+    window.addEventListener('scroll', () => {
+        if (!scrolled && window.scrollY > 50) {
+            scrolled = true;
+            document.querySelectorAll('.floating-element').forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.animationPlayState = 'running';
+                    el.style.opacity = '0.4';
+                }, index * 200);
+            });
+        }
+    });
+
+    // Sponsor Form Submission
+    // Sponsor Form AJAX Submission (with nice success alert)
+document.getElementById('sponsor-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById('sponsor-submit-btn');
+    const originalHTML = btn.innerHTML;
+
+    btn.disabled = true;
+    btn.innerHTML = 'Submitting...';
+
+    const formData = new FormData(this);
+
+    try {
+        const response = await fetch('/api/v1/sponsor/create/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Hide form, show beautiful success message
+            document.getElementById('sponsor-form').classList.add('hidden');
+            document.getElementById('sponsor-success').classList.remove('hidden');
+
+            // Scroll smoothly to success message
+            document.getElementById('sponsor-success').scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        } else {
+            alert(result.message || "Submission failed. Please try again.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Network error. Please try again later.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+    }
+});
+
+    // Newsletter Subscription
+    document.getElementById('newsletter-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById('newsletter-email').value;
+
+        // Hide form and show success message
+        document.getElementById('newsletter-form').classList.add('hidden');
+        document.getElementById('newsletter-success').classList.remove('hidden');
+
+        // Re-initialize icons for the success message
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+
+        // Reset form after 3 seconds
+        setTimeout(() => {
+            document.getElementById('newsletter-form').classList.remove('hidden');
+            document.getElementById('newsletter-success').classList.add('hidden');
+            document.getElementById('newsletter-email').value = '';
+        }, 3000);
+    });
+</script>
+
+</html>

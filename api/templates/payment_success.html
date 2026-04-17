@@ -1,0 +1,14 @@
+{% extends "base.html" %}  <!-- if you have base, else full html -->
+
+{% block content %}
+<div style="text-align:center; padding:80px 20px; background:#000; color:white; min-height:60vh;">
+  <h1 style="color:#ef4444;">Payment Successful!</h1>
+  <p style="font-size:1.3rem;">Thank you, {{ member_name }}!</p>
+  <p>Your registration for <strong>{{ event_name }}</strong> is confirmed.</p>
+  <p><strong>Registration ID:</strong> <span style="font-size:1.8rem; color:#fbbf24;">{{ registration_id }}</span></p>
+  <p>A confirmation email has been sent to {{ email }}.</p>
+  <a href="/" style="display:inline-block; margin-top:30px; padding:12px 30px; background:#ef4444; color:white; text-decoration:none; border-radius:6px;">
+    Back to Home
+  </a>
+</div>
+{% endblock %}

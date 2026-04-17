@@ -1,0 +1,167 @@
+{% extends 'pages/base.html' %}
+
+
+{% block title %}
+Sponsor Game of Titans | Partnership Opportunities
+{% endblock %}
+
+{% block meta_description %}
+Partner with Game of Titans and reach thousands of fitness-first audiences across India. Live streaming on WAVES OTT. Three cities. National scale.
+{% endblock %}
+
+{% block og_url %}
+https://gameoftitans.in/sponsors/
+{% endblock %}
+
+{% block og_title %}
+Sponsor Game of Titans | Partnership Opportunities
+{% endblock %}
+
+{% block og_meta_description %}
+Partner with Game of Titans and reach thousands of fitness-first audiences across India. Live streaming on WAVES OTT. Three cities. National scale.
+{% endblock %}
+
+{% block twitter_title %}
+Sponsor Game of Titans | Partnership Opportunities
+{% endblock %}
+
+{% block twitter_meta_description %}
+Partner with Game of Titans and reach thousands of fitness-first audiences across India. Live streaming on WAVES OTT. Three cities. National scale.
+{% endblock %}
+
+{% block content %}
+
+<!-- Sponsors Contact -->
+<section id="sponsors" class="py-32 px-6 relative overflow-hidden" style="background-color: #F2F2F2;">
+
+    <!-- Background Glow -->
+    <!--    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-titans-gold/10 blur-[200px] rounded-full pointer-events-none"></div>-->
+
+    <div class="max-w-5xl mx-auto relative z-10">
+        <div class="text-center mb-16">
+            <p class="text-sm uppercase tracking-[0.3em] text-titans-gold font-bold mb-4">Partnership Opportunities</p>
+            <h2 class="text-5xl md:text-7xl font-black tracking-tight text-gray-900 mb-6">Become a Sponsor</h2>
+            <p class="text-xl text-gray-700 max-w-2xl mx-auto">
+                Join us in empowering India's fitness revolution. Partner with Game of Titans to reach thousands of
+                passionate athletes and fitness enthusiasts.
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-12">
+
+            <!-- Partnership Benefits -->
+            <div class="space-y-8">
+                <h3 class="text-3xl font-black tracking-tight text-gray-900 mb-8">Why Partner With Us?</h3>
+
+                <div class="flex items-start gap-4">
+                    <div class="size-12 rounded-xl bg-titans-gold/10 border border-titans-gold/30 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="eye" class="size-6 text-titans-gold"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-2">Massive Brand Exposure</h4>
+                        <p class="text-gray-700">Reach thousands of fitness enthusiasts across India through event
+                            branding, social media, and live streaming.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="size-12 rounded-xl bg-titans-gold/10 border border-titans-gold/30 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="target" class="size-6 text-titans-gold"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-2">Targeted Audience</h4>
+                        <p class="text-gray-700">Connect with health-conscious, active individuals who value quality
+                            fitness products and services.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="size-12 rounded-xl bg-titans-gold/10 border border-titans-gold/30 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="handshake" class="size-6 text-titans-gold"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-2">Community Engagement</h4>
+                        <p class="text-gray-700">Build lasting relationships with gym owners, athletes, and fitness
+                            communities nationwide.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="size-12 rounded-xl bg-titans-gold/10 border border-titans-gold/30 flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="trending-up" class="size-6 text-titans-gold"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-2">Long-term Partnership</h4>
+                        <p class="text-gray-700">Grow with us as we expand to more cities and create larger championship
+                            events annually.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="registration-card">
+                <div class="flex items-center gap-3 mb-8">
+                    <i data-lucide="mail" class="size-10 text-titans-gold"></i>
+                    <div>
+                        <h3 class="text-3xl font-black tracking-tight text-gray-900">Get in Touch</h3>
+                        <p class="text-sm text-gray-600">Let's discuss partnership opportunities</p>
+                    </div>
+                </div>
+
+                <form id="sponsor-form" action="/api/v1/sponsor/create/" method="post" class="space-y-6">
+                    {% csrf_token %}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Company
+                            Name</label>
+                        <input type="text" id="sponsor-company" name="company" required class="form-input"
+                               placeholder="Enter your company name">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Contact
+                            Person</label>
+                        <input type="text" id="sponsor-person" required name="name" class="form-input"
+                               placeholder="Your full name">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Email</label>
+                        <input type="email" name="email" id="sponsor-email" required class="form-input"
+                               placeholder="company@example.com">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Phone</label>
+                        <input type="tel" id="sponsor-phone" name="contact_number" required class="form-input"
+                               placeholder="+91 XXXXX XXXXX">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Message</label>
+                        <textarea id="sponsor-message" rows="4" class="form-input" name="message"
+                                  placeholder="Tell us about your sponsorship interests and goals..."></textarea>
+                    </div>
+
+                    <button type="submit" id="sponsor-submit-btn"
+                            class="cta-button w-full">
+                        <span>Submit Inquiry</span>
+                        <i data-lucide="send" class="size-5"></i>
+                    </button>
+                </form>
+
+                <!-- Success Message -->
+                <div id="sponsor-success"
+                     class="hidden mt-6 p-6 rounded-2xl bg-white border border-titans-gold/30 shadow-sm">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i data-lucide="check-circle" class="size-6 text-titans-gold"></i>
+                        <h4 class="text-lg font-bold text-gray-900">Message Sent!</h4>
+                    </div>
+                    <p class="text-sm text-gray-600">Thank you for your interest. Our partnerships team will contact you
+                        within 24-48 hours.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

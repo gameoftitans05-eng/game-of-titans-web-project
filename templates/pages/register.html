@@ -1,0 +1,236 @@
+{% extends 'pages/base.html' %}
+
+
+{% block title %}
+Register for Game of Titans | Gyms & Athletes
+{% endblock %}
+
+{% block meta_description %}
+Register your gym or sign up as an athlete for Game of Titans Season One. Get your Titan Gym ID and secure your spot in India's biggest cross-fitness championship.
+{% endblock %}
+
+{% block og_url %}
+https://gameoftitans.in/register/
+{% endblock %}
+
+{% block og_title %}
+Register for Game of Titans | Gyms & Athletes
+{% endblock %}
+
+{% block og_meta_description %}
+Register your gym or sign up as an athlete for Game of Titans Season One. Get your Titan Gym ID and secure your spot in India's biggest cross-fitness championship.
+{% endblock %}
+
+{% block twitter_title %}
+Register for Game of Titans | Gyms & Athletes
+{% endblock %}
+
+{% block twitter_meta_description %}
+Register your gym or sign up as an athlete for Game of Titans Season One. Get your Titan Gym ID and secure your spot in India's biggest cross-fitness championship.
+{% endblock %}
+
+{% block content %}
+
+<!-- Registration Section -->
+<section id="registration-section" class="py-32 px-6" style="background-color: #F2F2F2;">
+
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-20">
+            <p class="text-sm uppercase tracking-[0.3em] text-titans-gold font-bold mb-4">Join the Battle</p>
+            <h2 class="text-5xl md:text-7xl font-black tracking-tight text-gray-900 mb-6">Registration</h2>
+            <p class="text-xl text-gray-700 max-w-2xl mx-auto">
+                Gyms register first to get a unique Titan ID. Participants use this ID to join the championship.
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-12">
+
+            <!-- Gym Registration -->
+            <div class="registration-card">
+                <div class="flex items-center gap-3 mb-8">
+                    <i data-lucide="building-2" class="size-10 text-titans-red"></i>
+                    <div>
+                        <h3 class="text-3xl font-black tracking-tight text-gray-900">Gym Registration</h3>
+                        <p class="text-sm text-gray-600">Get your unique Titan Gym ID</p>
+                    </div>
+                </div>
+
+                <form id="gym-form" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Gym
+                            Name</label>
+                        <input type="text" id="gym-name" name="name" required class="form-input"
+                               placeholder="Enter your gym name">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Email</label>
+                        <input type="email" id="gym-email" name="email" required class="form-input"
+                               placeholder="gym@example.com">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Phone</label>
+                        <input type="tel" id="gym-phone" name="contact_number" required class="form-input"
+                               placeholder="+91 XXXXX XXXXX">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">City</label>
+                        <input type="text" id="gym-city" name="city" required class="form-input"
+                               placeholder="Enter city">
+                    </div>
+
+                    <button type="submit" class="cta-button w-full">
+                        <span>Generate Gym ID</span>
+                        <i data-lucide="arrow-right" class="size-5"></i>
+                    </button>
+                </form>
+
+                <!-- Generated Gym ID Display -->
+                <div id="gym-id-display"
+                     class="hidden mt-8 p-6 rounded-2xl bg-white border border-titans-gold/30 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="check-circle" class="size-6 text-titans-gold"></i>
+                            <h4 class="text-lg font-bold text-gray-900">Your Gym ID</h4>
+                        </div>
+                        <button id="copy-gym-id"
+                                class="text-xs px-3 py-1 rounded-full bg-titans-red text-white hover:bg-red-700 transition-colors font-semibold uppercase tracking-wider">
+                            Copy
+                        </button>
+                    </div>
+                    <div id="gym-id-code" class="text-3xl font-black text-titans-gold tracking-widest">TITAN-XXXX</div>
+                    <p class="text-sm text-gray-600 mt-4">Share this ID with your participants to register for the
+                        championship</p>
+                </div>
+            </div>
+
+            <!-- Participant Registration -->
+            <div class="registration-card">
+                <div class="flex items-center gap-3 mb-8">
+                    <i data-lucide="user" class="size-10 text-titans-red"></i>
+                    <div>
+                        <h3 class="text-3xl font-black tracking-tight text-gray-900">Participant Registration</h3>
+                        <p class="text-sm text-gray-600">Join using your Gym's Titan ID</p>
+                    </div>
+                </div>
+
+                <form id="member-form" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Full
+                            Name</label>
+                        <input type="text" id="member-name" required class="form-input"
+                               placeholder="Enter your full name">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Email</label>
+                        <input type="email" id="member-email" required class="form-input" placeholder="your@email.com">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Phone</label>
+                        <input type="tel" id="member-phone" required class="form-input" placeholder="+91 XXXXX XXXXX">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Gender</label>
+                        <select id="member-gender" required class="form-input">
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Register
+                            As</label>
+                        <select id="member-register-type" required class="form-input">
+                            <option value="" disabled selected>Select Registration Type</option>
+                            <option value="individual">Individual (without Gym ID)</option>
+                            <option value="gym_member">Gym Participant (with Gym ID)</option>
+                        </select>
+                    </div>
+
+                    <div id="gym-id-container" style="display: none;">
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Gym Titan
+                            ID</label>
+                        <input type="text" id="member-gym-id" class="form-input" placeholder="TITAN-XXXX">
+                        <p class="text-xs text-gray-500 mt-2">Get this ID from your gym</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Select
+                            Event</label>
+                        <select id="member-event" required class="form-input">
+                            <option value="">Loading events...</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">Refer Code (Optional)</label>
+                        <input type="text" id="member-refer-code" class="form-input"
+                               placeholder="Enter refer code (Optional)" oninput="this.value = this.value.toUpperCase()">
+                    </div>
+
+                    <button type="submit" class="cta-button w-full">
+                        <span>Pay & Register</span>
+                        <i data-lucide="credit-card" class="size-5"></i>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Success Modal -->
+<div id="success-modal"
+     class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-6 hidden">
+
+    <div class="max-w-md w-full bg-white border border-gray-200 rounded-3xl p-8 relative shadow-xl">
+
+        <!-- Close Button -->
+        <button id="close-modal"
+                class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors">
+            <i data-lucide="x" class="size-6"></i>
+        </button>
+
+        <div class="text-center">
+
+            <!-- Success Icon -->
+            <div class="size-20 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
+                <i data-lucide="check-circle" class="size-12 text-green-600"></i>
+            </div>
+
+            <h3 class="text-3xl font-black text-gray-900 mb-4">Registration Successful!</h3>
+
+            <p class="text-gray-600 mb-8 leading-relaxed">
+                Your payment has been confirmed. Get ready to unleash your inner Titan!
+            </p>
+
+            <!-- Tracking ID Box -->
+            <div class="p-6 rounded-2xl bg-gray-50 border border-gray-200 mb-8">
+                <p class="text-xs uppercase tracking-widest text-gray-500 mb-2">Your Tracking ID</p>
+                <div class="flex items-center justify-between">
+                    <div id="tracking-id"
+                         class="text-2xl font-black text-titans-gold tracking-wider">TXN-XXXXXX
+                    </div>
+                    <button id="copy-tracking-id"
+                            class="text-xs px-4 py-2 rounded-full bg-titans-red hover:bg-red-700 text-white transition-colors font-semibold uppercase tracking-wider">
+                        Copy
+                    </button>
+                </div>
+            </div>
+
+            <p class="text-sm text-gray-600">
+                A confirmation email has been sent to your registered email address with
+                event details and payment receipt.
+            </p>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

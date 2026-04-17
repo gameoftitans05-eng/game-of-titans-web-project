@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS Variables */
+:root {
+    --titans-red: #DC2626;
+    --titans-gold: #F59E0B;
+    --titans-black: #000000;
+}
+
+/* Base Styles */
+@layer base {
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Custom Components */
+@layer components {
+    /* Hero Title */
+    .hero-title {
+        font-size: clamp(4rem, 15vw, 10rem);
+        line-height: 0.85;
+        letter-spacing: -0.08em;
+        font-weight: 900;
+        text-transform: uppercase;
+        background: linear-gradient(180deg, #ffffff 0%, #DC2626 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* CTA Button */
+    .cta-button {
+        @apply inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full font-bold text-lg uppercase tracking-wider transition-all duration-300;
+        background: linear-gradient(135deg, var(--titans-red) 0%, #991b1b 100%);
+        box-shadow: 0 0 30px rgba(220, 38, 38, 0.3);
+    }
+    .cta-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 50px rgba(220, 38, 38, 0.5);
+    }
+    .cta-button:active {
+        transform: scale(0.98);
+    }
+
+    /* Stats Card */
+    .stats-card {
+        @apply relative overflow-hidden rounded-2xl border border-titans-red/30 p-8;
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, rgba(0, 0, 0, 0.8) 100%);
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        transform: translate3d(0, 32px, 0);
+        filter: blur(14px);
+        transition: all 0.76s cubic-bezier(0.22, 0.68, 0, 1);
+        transition-delay: var(--delay, 0ms);
+    }
+    .stats-card.visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+        filter: blur(0);
+    }
+    .stats-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, transparent 0%, rgba(220, 38, 38, 0.1) 100%);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    .stats-card:hover::before {
+        opacity: 1;
+    }
+
+    /* Registration Card */
+    .registration-card {
+        @apply relative overflow-hidden rounded-3xl border border-titans-red/30 p-10;
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, rgba(0, 0, 0, 0.9) 100%);
+        backdrop-filter: blur(20px);
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .registration-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Guest Card */
+    .guest-card {
+        opacity: 0;
+        transform: scale(0.95);
+        transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .guest-card.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* Form Input */
+    .form-input {
+        @apply w-full px-4 py-3 rounded-xl border border-titans-red/30 bg-black/50 text-white placeholder-gray-600 focus:outline-none focus:border-titans-red focus:ring-2 focus:ring-titans-red/20 transition-all;
+    }
+    .form-input:focus {
+        box-shadow: 0 0 20px rgba(220, 38, 38, 0.2);
+    }
+}
+
+/* Custom Utilities */
+@layer utilities {
+    /* Background Grid Pattern */
+    .bg-grid-pattern {
+        background-image: 
+            linear-gradient(to right, rgba(220, 38, 38, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(220, 38, 38, 0.05) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+
+    /* Floating Elements */
+    .floating-element {
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        background: var(--titans-gold);
+        border-radius: 50%;
+        opacity: 0;
+        animation: float 8s infinite ease-in-out;
+        animation-play-state: paused;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    /* Hero Reveal Items */
+    .hero-reveal-item {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s cubic-bezier(0.22, 0.68, 0, 1);
+    }
+
+    /* Click Ripple */
+    .ripple {
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        background: rgba(220, 38, 38, 0.6);
+        border-radius: 50%;
+        pointer-events: none;
+        animation: ripple-effect 1s ease-out forwards;
+        z-index: 9999;
+    }
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0.2;
+    }
+    25% {
+        transform: translateY(-15px) translateX(8px);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translateY(-8px) translateX(-5px);
+        opacity: 0.4;
+    }
+    75% {
+        transform: translateY(-20px) translateX(10px);
+        opacity: 0.8;
+    }
+}
+
+@keyframes ripple-effect {
+    0% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(50);
+        opacity: 0;
+    }
+}
+
+/* Custom Color Classes */
+.text-titans-red {
+    color: var(--titans-red);
+}
+.text-titans-gold {
+    color: var(--titans-gold);
+}
+.bg-titans-red {
+    background-color: var(--titans-red);
+}
+.bg-titans-gold {
+    background-color: var(--titans-gold);
+}
+.border-titans-red {
+    border-color: var(--titans-red);
+}
+.border-titans-gold {
+    border-color: var(--titans-gold);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: clamp(3rem, 12vw, 6rem);
+        letter-spacing: -0.06em;
+    }
+
+    .stats-card {
+        padding: 1.5rem;
+    }
+
+    .registration-card {
+        padding: 2rem;
+    }
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
