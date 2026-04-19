@@ -4,6 +4,7 @@ asgiref==3.11.0
 cashfree_pg==5.0.5
 certifi==2026.1.4
 diff-match-patch==20241021
+dj-database-url==3.1.2
 Django==5.2
 django-cors-headers==4.9.0
 django-import-export==4.4.0
@@ -14,7 +15,9 @@ djangorestframework-stubs==3.16.7
 djangorestframework_simplejwt==5.5.1
 et_xmlfile==2.0.0
 Faker==40.5.1
+gunicorn==25.3.0
 openpyxl==3.1.5
+packaging==26.1
 psycopg2-binary==2.9.11
 pydantic==2.12.5
 pydantic_core==2.41.5

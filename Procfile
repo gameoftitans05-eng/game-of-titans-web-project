@@ -1,0 +1,1 @@
+web: gunicorn titan_api_proj.wsgi

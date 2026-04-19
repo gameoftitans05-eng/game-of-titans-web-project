@@ -9,9 +9,11 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 from datetime import timedelta
+
+import dj_database_url
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -120,15 +122,22 @@ WSGI_APPLICATION = 'titan_api_proj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': config('DB_NAME'),  # Name of your database
+#         'USER': config('DB_USER'),  # Your MySQL username
+#         'PASSWORD': config('DB_PASSWORD'),  # Your MySQL password
+#         'HOST': config('DB_HOST'),  # Host of your MySQL database (use 'localhost' for local MySQL)
+#         'PORT': config('DB_PORT'),  # Default MySQL port
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config('DB_NAME'),  # Name of your database
-        'USER': config('DB_USER'),  # Your MySQL username
-        'PASSWORD': config('DB_PASSWORD'),  # Your MySQL password
-        'HOST': config('DB_HOST'),  # Host of your MySQL database (use 'localhost' for local MySQL)
-        'PORT': config('DB_PORT'),  # Default MySQL port
-    }
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL'),
+        conn_max_age=600
+    )
 }
 
 # Password validation
@@ -168,7 +177,7 @@ STATICFILES_DIRS = [BASE_DIR / 'static']  # if you have project-level static
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-WHITENOISE_MANIFEST_STRICT = False          # ← prevents 500 if file missing from manifest
+WHITENOISE_MANIFEST_STRICT = False  # ← prevents 500 if file missing from manifest
 WHITENOISE_ALLOW_ALL_ORIGINS = True
 
 # Default primary key field type
@@ -176,11 +185,10 @@ WHITENOISE_ALLOW_ALL_ORIGINS = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 # ── INTERNAL EMAIL ADDRESSES ──────────────────────────────────────────────────
-REGISTRATIONS_EMAIL = 'registrations@gameoftitans.in'   # Iqbal
-OFFICE_EMAIL = 'office@gameoftitans.in'                  # Kaynaat
-ADMIN_EMAIL = 'admin@gameoftitans.in'                    # Satya (tech only)
+REGISTRATIONS_EMAIL = 'registrations@gameoftitans.in'  # Iqbal
+OFFICE_EMAIL = 'office@gameoftitans.in'  # Kaynaat
+ADMIN_EMAIL = 'admin@gameoftitans.in'  # Satya (tech only)
 
 # ── EMAIL ─────────────────────────────────────────────────────────────────────
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
