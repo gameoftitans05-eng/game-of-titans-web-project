@@ -500,12 +500,12 @@ def initiate_participation(request):
             return_url = getattr(
                 settings,
                 'CASHFREE_RETURN_URL',
-                'https://gameoftitans.in/api/v1/payment/success/?order_id={order_id}'
+                'https://game-of-titans-web-project-production.up.railway.app/api/v1/payment/success/?order_id={order_id}'
             )
             notify_url = getattr(
                 settings,
                 'CASHFREE_NOTIFY_URL',
-                'https://gameoftitans.in/api/v1/webhooks/cashfree/'
+                'https://game-of-titans-web-project-production.up.railway.app/api/v1/webhooks/cashfree/'
             )
 
             meta = OrderMeta(
