@@ -39,21 +39,24 @@ INTERNAL_CC = [REGISTRATIONS_EMAIL, OFFICE_EMAIL]
 # CASHFREE INIT
 # =========================================================
 def init_cashfree():
+    """
+    Return a properly initialized Cashfree instance
+    """
     try:
-        environment = (
-            Cashfree.SANDBOX
-            if getattr(settings, 'CASHFREE_ENV', 'SANDBOX') == 'SANDBOX'
-            else Cashfree.PRODUCTION
-        )
+        environment = Cashfree.PRODUCTION if getattr(settings, 'CASHFREE_ENV',
+                                                     'PROD') == 'PROD' else Cashfree.PRODUCTION
+
         cf = Cashfree(
             XClientId=settings.CASHFREE_CLIENT_ID,
             XClientSecret=settings.CASHFREE_CLIENT_SECRET,
             XEnvironment=environment
         )
+        print("Cashfree initialized successfully with environment:", environment)
         return cf
+
     except Exception as e:
         print("Cashfree initialization failed:", str(e))
-        raise
+        raise  # re-raise to see full error in view
 
 
 # =========================================================
@@ -515,14 +518,6 @@ def initiate_participation(request):
 
             req = CreateOrderRequest(
                 order_id=order_id,
-                order_amount=1999,
-                order_currency="INR",
-                customer_details=customer,
-                order_meta=meta,
-                order_note=f"GOT {event_leg}"
-            )
-            req = CreateOrderRequest(
-                order_id=order_id,
                 order_amount=1999.0,
                 order_currency="INR",
                 customer_details=customer,
@@ -555,6 +550,7 @@ def initiate_participation(request):
             # send_satya_technical_ping("Payment Error", str(e))
 
             print('Payment Error: ', str(e))
+            athlete.delete()
 
             return Response({
                 "success": False,
