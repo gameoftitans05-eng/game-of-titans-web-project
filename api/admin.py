@@ -13,10 +13,19 @@ from .models import (
 )
 
 
+from django.contrib import admin
+
+class MyAdminSite(admin.AdminSite):
+    site_header = "GOT Admin"
+    site_title = "GOT Admin Portal"
+    index_title = "GOT Admin"  # keep empty to remove "Site administration"
+
+admin_site = MyAdminSite(name="myadmin")
+
+
 # =========================================================
 # GOT EMPLOYEE
 # =========================================================
-@admin.register(GOTEmployee)
 class GOTEmployeeAdmin(admin.ModelAdmin):
     list_display = ("name", "code", "city", "event_leg", "is_active", "created_at")
     search_fields = ("name", "code", "email", "phone")
@@ -28,7 +37,6 @@ class GOTEmployeeAdmin(admin.ModelAdmin):
 # =========================================================
 # GYM ADMIN (CRITICAL)
 # =========================================================
-@admin.register(Gym)
 class GymAdmin(admin.ModelAdmin):
     list_display = (
         "name",
@@ -72,7 +80,6 @@ class GymAdmin(admin.ModelAdmin):
 # =========================================================
 # ATHLETE ADMIN
 # =========================================================
-@admin.register(Athlete)
 class AthleteAdmin(admin.ModelAdmin):
     list_display = (
         "name",
@@ -92,7 +99,6 @@ class AthleteAdmin(admin.ModelAdmin):
 # =========================================================
 # PARTICIPATION ADMIN (VERY IMPORTANT)
 # =========================================================
-@admin.register(Participation)
 class ParticipationAdmin(admin.ModelAdmin):
     list_display = (
         "tracking_id",
@@ -127,7 +133,6 @@ class ParticipationAdmin(admin.ModelAdmin):
 # =========================================================
 # PAYMENT ORDER ADMIN
 # =========================================================
-@admin.register(PaymentOrder)
 class PaymentOrderAdmin(admin.ModelAdmin):
     list_display = (
         "order_id",
@@ -152,7 +157,6 @@ class PaymentOrderAdmin(admin.ModelAdmin):
 # =========================================================
 # REFER USER
 # =========================================================
-@admin.register(ReferUser)
 class ReferUserAdmin(admin.ModelAdmin):
     list_display = ("name", "refer_code", "gym", "created_at")
     search_fields = ("name", "refer_code")
@@ -162,7 +166,6 @@ class ReferUserAdmin(admin.ModelAdmin):
 # =========================================================
 # SPONSOR
 # =========================================================
-@admin.register(Sponsor)
 class SponsorAdmin(admin.ModelAdmin):
     list_display = ("company", "name", "email", "phone", "created_at")
     search_fields = ("company", "name", "email")
@@ -172,7 +175,6 @@ class SponsorAdmin(admin.ModelAdmin):
 # =========================================================
 # EMAIL LOG (IMPORTANT)
 # =========================================================
-@admin.register(EmailLog)
 class EmailLogAdmin(admin.ModelAdmin):
     list_display = (
         "to_email",
@@ -194,3 +196,15 @@ class EmailLogAdmin(admin.ModelAdmin):
         "related_athlete",
         "created_at"
     )
+
+
+
+admin_site.register(GOTEmployee, GOTEmployeeAdmin)
+admin_site.register(Gym, GymAdmin)
+admin_site.register(Athlete, AthleteAdmin)
+admin_site.register(Participation, ParticipationAdmin)
+admin_site.register(PaymentOrder, PaymentOrderAdmin)
+admin_site.register(ReferUser, ReferUserAdmin)
+admin_site.register(Sponsor, SponsorAdmin)
+admin_site.register(EmailLog, EmailLogAdmin)
+
