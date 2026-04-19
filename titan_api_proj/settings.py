@@ -219,8 +219,8 @@ CASHFREE_API_VERSION = "2025-01-01"
 
 # Very important for redirect after payment
 # ── CASHFREE URLS — PRODUCTION DOMAIN ────────────────────────────────────────
-CASHFREE_RETURN_URL = "https://gameoftitans.in/api/v1/payment/success/?order_id={order_id}"
-CASHFREE_NOTIFY_URL = "https://gameoftitans.in/api/v1/webhooks/cashfree/"
+CASHFREE_RETURN_URL = "https://game-of-titans-web-project-production.up.railway.app/api/v1/payment/success/?order_id={order_id}"
+CASHFREE_NOTIFY_URL = "https://game-of-titans-web-project-production.up.railway.app/api/v1/webhooks/cashfree/"
 
 CSRF_TRUSTED_ORIGINS = [
     'https://game-of-titans-web-project-production.up.railway.app',
