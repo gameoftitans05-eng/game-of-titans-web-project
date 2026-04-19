@@ -1,0 +1,139 @@
+                         @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS Variables - Light Theme */
+:root {
+    --titans-red: #DC2626;
+    --titans-gold: #F59E0B;
+    --titans-black: #111827;
+    --bg-primary: #F8F9FA;
+    --bg-secondary: #FFFFFF;
+    --text-primary: #111827;
+    --text-secondary: #374151;
+    --text-muted: #6B7280;
+    --border-color: #E5E7EB;
+}
+
+/* Base Styles */
+@layer base {
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+    }
+}
+
+/* Custom Components - Light Theme */
+@layer components {
+    .hero-title {
+        font-size: clamp(4rem, 15vw, 10rem);
+        line-height: 0.85;
+        letter-spacing: -0.08em;
+        font-weight: 900;
+        text-transform: uppercase;
+        background: linear-gradient(180deg, #111827 0%, var(--titans-red) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .cta-button {
+        @apply inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full font-bold text-lg uppercase tracking-wider transition-all duration-300;
+        background: linear-gradient(135deg, var(--titans-red) 0%, #B91C1C 100%);
+        box-shadow: 0 10px 30px rgba(220, 38, 38, 0.25);
+        color: white;
+    }
+    .cta-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 40px rgba(220, 38, 38, 0.35);
+    }
+
+    /* Stats Card - Light */
+    /* Stats Card - Premium Light Metallic Style (Matches your reference image) */
+.stats-card {
+    @apply relative overflow-hidden rounded-3xl border p-8 text-center;
+    background: linear-gradient(145deg, #f8fafc, #e2e8f0, #f1f5f9);
+    border: 1px solid #e2e8f0;
+    box-shadow:
+        0 10px 30px -10px rgb(0 0 0 / 0.08),
+        inset 0 3px 0 rgba(255, 255, 255, 0.9),
+        inset 0 -3px 0 rgba(0, 0, 0, 0.04);
+    transition: all 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+    opacity: 0;
+    transform: translate3d(0, 32px, 0);
+    filter: blur(14px);
+}
+
+.stats-card.visible {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+}
+
+.stats-card:hover {
+    transform: translateY(-8px);
+    box-shadow:
+        0 20px 45px -15px rgb(220 38 38 / 0.18),
+        inset 0 3px 0 rgba(255, 255, 255, 0.95);
+    border-color: #fcd34d40; /* subtle gold tint on hover */
+}
+
+/* Large number gradient for better visual pop */
+.stats-card .text-6xl {
+    background: linear-gradient(90deg, #f59e0b, #dc2626);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+}
+
+    /* Registration Card - Light */
+    .registration-card {
+        @apply relative overflow-hidden rounded-3xl border p-10;
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Form Input - Light */
+    .form-input {
+        @apply w-full px-4 py-3 rounded-xl border bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:border-titans-red focus:ring-2 focus:ring-titans-red/20 transition-all;
+    }
+}
+
+/* Custom Utilities */
+@layer utilities {
+    .floating-element {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background: var(--titans-gold);
+        border-radius: 50%;
+        opacity: 0.15;
+        animation: float 10s infinite ease-in-out;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .hero-reveal-item {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s cubic-bezier(0.22, 0.68, 0, 1);
+    }
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-25px) translateX(15px); }
+}
+
+/* Color Classes */
+.text-titans-red { color: var(--titans-red); }
+.text-titans-gold { color: var(--titans-gold); }
+.bg-titans-red { background-color: var(--titans-red); }
+.bg-titans-gold { background-color: var(--titans-gold); }
+.border-titans-red { border-color: var(--titans-red); }
+.border-titans-gold { border-color: var(--titans-gold); }
