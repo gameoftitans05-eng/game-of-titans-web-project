@@ -620,8 +620,8 @@ def payment_success(request):
                 if not participation:
                     raise Exception("Participation not found for payment")
 
-                participation.payment_status = "success"
-                participation.save()
+            participation.payment_status = "success"
+            participation.save()
 
             athlete = participation.athlete
             gym = participation.gym
@@ -643,11 +643,11 @@ def payment_success(request):
             <p>Save your Tracking ID for future communication.</p>
             """
 
-            send_got_email(
-                subject="You're a Titan. Welcome to Game of Titans.",
-                to_email=athlete.email,
-                html_content=email_html
-            )
+            # send_got_email(
+            #     subject="You're a Titan. Welcome to Game of Titans.",
+            #     to_email=athlete.email,
+            #     html_content=email_html
+            # )
 
         # ─────────────────────────────────────────
         # EMAIL 8 — EMPLOYEE NOTIFICATION

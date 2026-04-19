@@ -1,14 +1,236 @@
-{% extends "base.html" %}  <!-- if you have base, else full html -->
+<!DOCTYPE html>
 
-{% block content %}
-<div style="text-align:center; padding:80px 20px; background:#000; color:white; min-height:60vh;">
-  <h1 style="color:#ef4444;">Payment Successful!</h1>
-  <p style="font-size:1.3rem;">Thank you, {{ member_name }}!</p>
-  <p>Your registration for <strong>{{ event_name }}</strong> is confirmed.</p>
-  <p><strong>Registration ID:</strong> <span style="font-size:1.8rem; color:#fbbf24;">{{ registration_id }}</span></p>
-  <p>A confirmation email has been sent to {{ email }}.</p>
-  <a href="/" style="display:inline-block; margin-top:30px; padding:12px 30px; background:#ef4444; color:white; text-decoration:none; border-radius:6px;">
-    Back to Home
-  </a>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Game of Titans — Registration Confirmed</title>
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    background: #F7F7F7;
+    font-family: Arial, sans-serif;
+    color: #454240;
+}
+
+.wrapper {
+    width: 100%;
+    padding: 24px 12px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* ================= HEADER ================= */
+
+.header {
+    padding: 32px 20px 16px;
+    text-align: center;
+}
+
+.eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 600;
+    background: linear-gradient(90deg, #021E8F, #08A4EF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #5C4E3D;
+    margin-top: 8px;
+}
+
+/* ================= CONTENT ================= */
+
+.content {
+    padding: 24px 20px 32px;
+}
+
+.heading {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #454240;
+}
+
+/* ================= TRACKING ================= */
+
+.tracking-box {
+    text-align: center;
+    margin: 24px 0;
+}
+
+.tracking-label {
+    font-size: 12px;
+    color: #7A7A7A;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.tracking-id {
+    font-size: 26px;
+    font-weight: 700;
+    margin-top: 6px;
+    background: linear-gradient(90deg, #021E8F, #08A4EF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ================= CARD ================= */
+
+.card {
+    margin-top: 20px;
+    border: 1px solid #EBEBEB;
+    border-radius: 6px;
+    padding: 16px;
+    background: #FAFAFA;
+}
+
+.row {
+    padding: 8px 0;
+    font-size: 13px;
+    border-bottom: 1px solid #EBEBEB;
+}
+
+.row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    color: #7A7A7A;
+    display: block;
+}
+
+.value {
+    font-weight: 600;
+    color: #5C4E3D;
+}
+
+/* ================= FOOTER ================= */
+
+.footer {
+    text-align: center;
+    font-size: 12px;
+    color: #7A7A7A;
+    padding: 20px;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 600px) {
+
+    .container {
+        border-radius: 0;
+    }
+
+    .title {
+        font-size: 22px;
+    }
+
+    .tracking-id {
+        font-size: 22px;
+    }
+
+    .content {
+        padding: 20px 16px 28px;
+    }
+
+    .card {
+        padding: 14px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="eyebrow">Game of Titans</div>
+        <div class="title">You Are a Titan</div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+        <div class="heading">
+            Registration Successful
+        </div>
+
+        <p class="text">
+            Dear {{ athlete_name }},
+        </p>
+
+        <p class="text">
+            Your registration for <strong>{{ event_leg }}</strong> has been successfully confirmed.
+        </p>
+
+        <!-- TRACKING -->
+        <div class="tracking-box">
+            <div class="tracking-label">Tracking ID</div>
+            <div class="tracking-id">{{ tracking_id }}</div>
+        </div>
+
+        <!-- DETAILS -->
+        <div class="card">
+
+            <div class="row">
+                <span class="label">Gym</span>
+                <span class="value">
+                    {{ gym_name }}{% if gym_id %} ({{ gym_id }}){% endif %}
+                </span>
+            </div>
+
+            <div class="row">
+                <span class="label">Event Date</span>
+                <span class="value">{{ event_leg }}</span>
+            </div>
+
+            <div class="row">
+                <span class="label">Amount Paid</span>
+                <span class="value">{{ amount }}</span>
+            </div>
+
+        </div>
+
+        <p class="text" style="margin-top:20px;">
+            Save your Tracking ID — it will be required for event check-in and all future communication.
+        </p>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        Game of Titans • Mumbai, India<br>
+        info@gameoftitans.in
+    </div>
+
 </div>
-{% endblock %}
+</div>
+
+</body>
+</html>
