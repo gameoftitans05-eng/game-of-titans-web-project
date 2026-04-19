@@ -246,28 +246,28 @@ def register_gym(request):
         if gym.is_mpcg:
 
             # Email 2 → Gym Pending
-            send_got_email(
-                subject="Game of Titans — Your Registration is Being Processed",
-                to_email=gym.email,
-                html_content=f"""
-                Dear {gym.name},<br><br>
-                Thank you for registering.<br><br>
-                Our MP & Chhattisgarh Regional Partner will contact you within 48 hours to complete onboarding.<br><br>
-                For queries: mpcg@gameoftitans.in
-                """
-            )
+            # send_got_email(
+            #     subject="Game of Titans — Your Registration is Being Processed",
+            #     to_email=gym.email,
+            #     html_content=f"""
+            #     Dear {gym.name},<br><br>
+            #     Thank you for registering.<br><br>
+            #     Our MP & Chhattisgarh Regional Partner will contact you within 48 hours to complete onboarding.<br><br>
+            #     For queries: mpcg@gameoftitans.in
+            #     """
+            # )
 
             # Email 3 → Regional Partner
-            send_internal_alert(
-                subject="New Gym Lead — MP/CG — Action Required Within 48 Hours",
-                message=f"""
-                Gym: {gym.name}
-                Contact: {gym.contact_person}
-                Phone: {gym.phone}
-                City: {gym.city}
-                Expected Athletes: {gym.expected_athletes}
-                """
-            )
+            # send_internal_alert(
+            #     subject="New Gym Lead — MP/CG — Action Required Within 48 Hours",
+            #     message=f"""
+            #     Gym: {gym.name}
+            #     Contact: {gym.contact_person}
+            #     Phone: {gym.phone}
+            #     City: {gym.city}
+            #     Expected Athletes: {gym.expected_athletes}
+            #     """
+            # )
 
             return JsonResponse({
                 "success": True,
@@ -281,27 +281,28 @@ def register_gym(request):
         else:
 
             # Email 1 → Gym Confirmation
-            send_got_email(
-                subject="Welcome to Game of Titans — Your Titan Gym ID is Ready",
-                to_email=gym.email,
-                html_content=f"""
-                Dear {gym.name},<br><br>
-                Your Titan Gym ID:<br>
-                <h2>{gym.titan_id}</h2><br>
-                Share this ID with your athletes.<br><br>
-                """
-            )
+            # send_got_email(
+            #     subject="Welcome to Game of Titans — Your Titan Gym ID is Ready",
+            #     to_email=gym.email,
+            #     html_content=f"""
+            #     Dear {gym.name},<br><br>
+            #     Your Titan Gym ID:<br>
+            #     <h2>{gym.titan_id}</h2><br>
+            #     Share this ID with your athletes.<br><br>
+            #     """
+            # )
 
             # Internal notification (Employee)
             if gym.got_employee:
-                send_internal_alert(
-                    subject=f"New Gym Registered Under You — {gym.name} | {gym.city}",
-                    message=f"""
-                    Gym: {gym.name}
-                    Phone: {gym.phone}
-                    Titan ID: {gym.titan_id}
-                    """
-                )
+                pass
+                # send_internal_alert(
+                #     subject=f"New Gym Registered Under You — {gym.name} | {gym.city}",
+                #     message=f"""
+                #     Gym: {gym.name}
+                #     Phone: {gym.phone}
+                #     Titan ID: {gym.titan_id}
+                #     """
+                # )
 
             return JsonResponse({
                 "success": True,
@@ -312,10 +313,10 @@ def register_gym(request):
 
     except Exception as e:
         import datetime
-        send_satya_technical_ping(
-            "Gym Registration Error",
-            f"{str(e)} | {datetime.datetime.now()}"
-        )
+        # send_satya_technical_ping(
+        #     "Gym Registration Error",
+        #     f"{str(e)} | {datetime.datetime.now()}"
+        # )
         return JsonResponse({
             "success": False,
             "error": "Something went wrong. Please try again."
@@ -546,12 +547,12 @@ def initiate_participation(request):
             payment_order.status = "failed"
             payment_order.save()
 
-            send_internal_alert(
-                subject=f"Payment Failure — {name} | ₹1999",
-                message=f"{str(e)}"
-            )
+            # send_internal_alert(
+            #     subject=f"Payment Failure — {name} | ₹1999",
+            #     message=f"{str(e)}"
+            # )
 
-            send_satya_technical_ping("Payment Error", str(e))
+            # send_satya_technical_ping("Payment Error", str(e))
 
             print('Payment Error: ', str(e))
 
@@ -561,7 +562,7 @@ def initiate_participation(request):
             }, status=500)
 
     except Exception as e:
-        send_satya_technical_ping("Participation Error", str(e))
+        # send_satya_technical_ping("Participation Error", str(e))
         print("Participation Error: ", str(e))
         return Response({
             "success": False,
@@ -654,15 +655,15 @@ def payment_success(request):
         if participation.athlete.got_employee:
             emp = participation.athlete.got_employee
 
-            send_internal_alert(
-                subject=f"New Athlete Registered Under You — {athlete.name}",
-                message=f"""
-                Athlete: {athlete.name}
-                Phone: {athlete.phone}
-                Tracking ID: {participation.tracking_id}
-                Event: {participation.event_leg}
-                """
-            )
+            # send_internal_alert(
+            #     subject=f"New Athlete Registered Under You — {athlete.name}",
+            #     message=f"""
+            #     Athlete: {athlete.name}
+            #     Phone: {athlete.phone}
+            #     Tracking ID: {participation.tracking_id}
+            #     Event: {participation.event_leg}
+            #     """
+            # )
 
         # ─────────────────────────────────────────
         # SUCCESS PAGE
@@ -679,13 +680,13 @@ def payment_success(request):
         return render(request, "payment_success.html", context)
 
     except PaymentOrder.DoesNotExist:
-        send_satya_technical_ping("Payment Success Error", "Order not found. Contact support.")
+        # send_satya_technical_ping("Payment Success Error", "Order not found. Contact support.")
         return render(request, "payment_error.html", {
             "message": "Order not found. Contact support."
         })
 
     except Exception as e:
-        send_satya_technical_ping("Payment Success Error", str(e))
+        # send_satya_technical_ping("Payment Success Error", str(e))
         return render(request, "payment_error.html", {
             "message": "Something went wrong. Contact support."
         })
@@ -741,21 +742,21 @@ def cashfree_webhook(request):
             # ── Payment failure alert ──────────────────────────────────
             member = order.member
             import datetime
-            send_internal_alert(
-                subject=f"Payment Failure — {member.name if member else 'Unknown'} | Order {order_id}",
-                message=(
-                    f"Payment failed via Cashfree webhook.\n\n"
-                    f"Athlete: {member.name if member else 'N/A'}\n"
-                    f"Email: {member.email if member else 'N/A'}\n"
-                    f"Phone: {member.contact_number if member else 'N/A'}\n"
-                    f"Amount: ₹{order.amount}\n"
-                    f"Order ID: {order_id}\n"
-                    f"Payment Status: {payment_status}\n"
-                    f"CF Payment ID: {cf_payment_id}\n"
-                    f"Timestamp: {datetime.datetime.now()}\n\n"
-                    f"Action required: Contact the athlete if needed."
-                )
-            )
+            # send_internal_alert(
+            #     subject=f"Payment Failure — {member.name if member else 'Unknown'} | Order {order_id}",
+            #     message=(
+            #         f"Payment failed via Cashfree webhook.\n\n"
+            #         f"Athlete: {member.name if member else 'N/A'}\n"
+            #         f"Email: {member.email if member else 'N/A'}\n"
+            #         f"Phone: {member.contact_number if member else 'N/A'}\n"
+            #         f"Amount: ₹{order.amount}\n"
+            #         f"Order ID: {order_id}\n"
+            #         f"Payment Status: {payment_status}\n"
+            #         f"CF Payment ID: {cf_payment_id}\n"
+            #         f"Timestamp: {datetime.datetime.now()}\n\n"
+            #         f"Action required: Contact the athlete if needed."
+            #     )
+            # )
         else:
             order.status = 'UNKNOWN'
 
@@ -816,10 +817,10 @@ def create_sponsor(request):
         message=request.POST.get("message") or None,
     )
 
-    send_internal_alert(
-        subject=f"New Sponsor Inquiry — {company}",
-        message=f"{name} submitted inquiry"
-    )
+    # send_internal_alert(
+    #     subject=f"New Sponsor Inquiry — {company}",
+    #     message=f"{name} submitted inquiry"
+    # )
 
     return redirect("sponsor-success")
 
