@@ -87,7 +87,7 @@ def send_got_email(subject, html_content, to_email, gym=None, athlete=None, extr
             cc=INTERNAL_CC
         )
         msg.attach_alternative(html_content, "text/html")
-        msg.send(fail_silently=False)
+        msg.send(fail_silently=True)
 
         print(f"Email sent to {to_email}, CC: {cc_list}")
 
@@ -118,7 +118,8 @@ def send_internal_alert(subject, message, gym=None, athlete=None):
             subject,
             message,
             settings.DEFAULT_FROM_EMAIL,
-            INTERNAL_CC
+            INTERNAL_CC,
+            fail_silently=True
         )
 
         log.status = "sent"
@@ -141,6 +142,7 @@ def send_satya_technical_ping(error_type, error_msg=None):
             f"Type: {error_type}\nTime: {datetime.datetime.now()} \nMessage: {error_msg}",
             settings.DEFAULT_FROM_EMAIL,
             [ADMIN_EMAIL],
+            fail_silently=True
         )
         return True
     except Exception:
