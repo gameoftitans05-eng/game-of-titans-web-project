@@ -154,7 +154,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -176,22 +176,40 @@ WHITENOISE_ALLOW_ALL_ORIGINS = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Email Configuration
+
+# ── INTERNAL EMAIL ADDRESSES ──────────────────────────────────────────────────
+REGISTRATIONS_EMAIL = 'registrations@gameoftitans.in'   # Iqbal
+OFFICE_EMAIL = 'office@gameoftitans.in'                  # Kaynaat
+ADMIN_EMAIL = 'admin@gameoftitans.in'                    # Satya (tech only)
+
+# ── EMAIL ─────────────────────────────────────────────────────────────────────
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = 465
-EMAIL_USE_SSL = True  # Note: Use SSL instead of TLS for port 465
+EMAIL_USE_SSL = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # Replace with the actual password
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
 
-# Cashfree config
+# ── SECURITY HEADERS — ADD THESE ─────────────────────────────────────────────
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+# ── CASHFREE — PRODUCTION ─────────────────────────────────────────────────────
+# Change these in your .env file:
+# CASHFREE_ENV=PROD
+# CASHFREE_TEST_API_KEY=your_PRODUCTION_api_key      (keep variable name same)
+# CASHFREE_TEST_SECRET_KEY=your_PRODUCTION_secret    (keep variable name same)
+# CASHFREE_WEBHOOK_SECRET=your_webhook_secret_key
+
 CASHFREE_CLIENT_ID = config('CASHFREE_TEST_API_KEY')
 CASHFREE_CLIENT_SECRET = config('CASHFREE_TEST_SECRET_KEY')
-CASHFREE_ENV = 'SANDBOX'  # change to "PROD" later
-CASHFREE_API_VERSION = "2025-01-01"  # most current in 2026
+CASHFREE_WEBHOOK_SECRET = config('CASHFREE_WEBHOOK_SECRET', default='')
+CASHFREE_ENV = config('CASHFREE_ENV', default='PROD')
+CASHFREE_API_VERSION = "2025-01-01"
 
 # Very important for redirect after payment
-# For local development
-CASHFREE_RETURN_URL = "http://127.0.0.1:8000/api/v1/payment/success/?order_id={order_id}"
-CASHFREE_NOTIFY_URL = "http://127.0.0.1:8000/api/v1/webhooks/cashfree/"
+# ── CASHFREE URLS — PRODUCTION DOMAIN ────────────────────────────────────────
+CASHFREE_RETURN_URL = "https://gameoftitans.in/api/v1/payment/success/?order_id={order_id}"
+CASHFREE_NOTIFY_URL = "https://gameoftitans.in/api/v1/webhooks/cashfree/"

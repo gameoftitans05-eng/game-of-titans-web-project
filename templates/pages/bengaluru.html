@@ -1,10 +1,124 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'pages/base.html' %}
 
-</body>
-</html>
+{% block title %}
+Game of Titans Bengaluru | Leg 3 — February 6, 2027
+{% endblock %}
+
+{% block meta_description %}
+The final leg of Game of Titans Season One lands in Bengaluru on February 6, 2027. The last champions of the season will be crowned here.
+{% endblock %}
+
+{% block og_url %}
+https://gameoftitans.in/bengaluru/
+{% endblock %}
+
+{% block og_title %}
+Game of Titans Bengaluru | Leg 3 — February 6, 2027
+{% endblock %}
+
+{% block og_meta_description %}
+The final leg of Game of Titans Season One lands in Bengaluru on February 6, 2027. The last champions of the season will be crowned here.
+{% endblock %}
+
+{% block twitter_title %}
+Game of Titans Bengaluru | Leg 3 — February 6, 2027
+{% endblock %}
+
+{% block twitter_meta_description %}
+The final leg of Game of Titans Season One lands in Bengaluru on February 6, 2027. The last champions of the season will be crowned here.
+{% endblock %}
+
+{% block content %}
+
+<section class="py-32 px-6" style="background-color: #F7F7F7;">
+
+    <!-- Heading -->
+    <div class="text-center mb-20">
+        <h2>
+            Bengaluru.<br>The Final Showdown.
+        </h2>
+    </div>
+
+    <!-- GRID -->
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-start">
+
+        <!-- LEFT CONTENT -->
+        <div class="flex flex-col h-full">
+
+            <!-- Cards -->
+            <div class="grid sm:grid-cols-2 gap-6 mb-10">
+
+                <!-- Card 1 -->
+                <div class="p-6 rounded-md gradient-border-blue">
+                    <h3 class="mb-2">
+                        Event Date
+                    </h3>
+                    <p style="font-weight:600; color:#021E8F;">
+                        February 6, 2027
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="p-6 rounded-md gradient-border-blue">
+                    <h3 class="mb-2">
+                        Location
+                    </h3>
+                    <p>
+                        Bengaluru, Karnataka
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="p-6 rounded-md gradient-border-blue sm:col-span-2">
+                    <h3 class="mb-2">
+                        What Happens Here
+                    </h3>
+                    <p>
+                        The final leg of Game of Titans Season One culminates here—where the strongest
+                        athletes battle for ultimate glory and the final Male and Female champions are crowned.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT IMAGE -->
+        <div class="flex items-center h-full">
+            <div class="relative overflow-hidden rounded-md gradient-border-blue w-full">
+
+                <img
+                    src="https://images.unsplash.com/photo-1596176530529-78163a4f7af2"
+                    alt="Bengaluru city skyline"
+                    style="height:455px;"
+                    class="w-full object-cover transition-all duration-700"
+                />
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="space-y-4 mt-4 text-center max-w-4xl mx-auto" style="margin-top: 5rem;">
+
+        <p>
+            Bengaluru hosts the grand finale of <span style="font-style: italic;">Game of Titans</span>,
+            where the season reaches its ultimate peak.
+        </p>
+
+        <p>
+            The journey across cities comes to an end here, as only the most consistent and
+            elite athletes compete for the highest honor.
+        </p>
+
+        <p>
+            This is where legacies are built—
+            <span style="font-weight:600; color:#5C4E3D;">and champions are defined forever.</span>
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

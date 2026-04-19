@@ -1,16 +1,168 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Payment Error - Game of Titans</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #000; color: #fff; }
-        .error { color: #ef4444; font-size: 2rem; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Error — Game of Titans</title>
+
+```
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #F7F7F7;
+        font-family: 'Inter', Arial, sans-serif;
+        color: #454240;
+    }
+
+    .wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .card {
+        max-width: 520px;
+        width: 100%;
+        background: #FFFFFF;
+        border-radius: 6px;
+        padding: 48px 32px;
+        text-align: center;
+
+        border: 2px solid transparent;
+        border-image: linear-gradient(135deg, #D30201, #FF4D4D) 1;
+    }
+
+    .eyebrow {
+        font-size: 11px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: #D30201;
+    }
+
+    .title {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 40px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #5C4E3D;
+        margin-bottom: 16px;
+    }
+
+    .message {
+        font-size: 15px;
+        color: #7A7A7A;
+        margin-bottom: 28px;
+        line-height: 1.6;
+    }
+
+    .note {
+        font-size: 13px;
+        color: #7A7A7A;
+        margin-bottom: 32px;
+    }
+
+    .actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        padding: 14px 24px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-decoration: none;
+        color: #FFFFFF;
+        background: linear-gradient(135deg, #021E8F, #08A4EF);
+    }
+
+    .btn-secondary {
+        padding: 14px 24px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-decoration: none;
+        color: #5C4E3D;
+        border: 1px solid #EBEBEB;
+        background: #FFFFFF;
+    }
+
+    .btn-secondary:hover {
+        border-color: #021E8F;
+    }
+
+    /* MOBILE */
+    @media (max-width: 640px) {
+        .card {
+            padding: 32px 20px;
+        }
+
+        .title {
+            font-size: 30px;
+        }
+
+        .actions {
+            flex-direction: column;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
 </head>
+
 <body>
-    <h1 class="error">Something went wrong</h1>
-    <p>{{ message }}</p>
-    <a href="/" style="color: #fbbf24; font-size: 1.2rem;">Back to Home</a>
+
+<div class="wrapper">
+
+
+<div class="card">
+
+    <!-- HEADER -->
+    <div class="eyebrow">System Error</div>
+
+    <div class="title">
+        Something Went Wrong
+    </div>
+
+    <!-- MESSAGE -->
+    <div class="message">
+        {{ message|default:"We encountered an unexpected issue while processing your request." }}
+    </div>
+
+    <!-- NOTE -->
+    <div class="note">
+        If the problem persists, contact <strong>info@gameoftitans.in</strong> with your details.
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+        <a href="/register#athlete" class="btn-primary">
+            Try Again
+        </a>
+
+        <a href="/" class="btn-secondary">
+            Back to Home
+        </a>
+    </div>
+
+</div>
+
+</div>
+
 </body>
 </html>

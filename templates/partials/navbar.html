@@ -1,66 +1,74 @@
-<!-- Navigation Header (Light Theme) -->
-<header class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-gray-200 shadow-sm bg-white">
-    <nav class="max-w-7xl mx-auto px-6 py-4">
-        <div class="flex items-center justify-between">
-            <!-- Logo -->
-            <a href="/" class="flex items-center">
-                <img
-                        src="https://felikstar.com/titans-media/game-of-titans-logo.png"
-                        alt="Game of Titans Logo"
-                        class="h-12 w-auto object-contain"
-                />
+<header id="navbar"
+        class="fixed top-0 left-0 right-0 z-50 bg-[#F7F7F7] transition-all duration-300"
+        style="background-color: #F7F7F7;">
+
+    <nav class="max-w-7xl mx-auto px-6 h-[70px] flex items-center justify-between transition-all duration-300"
+         style="height: 70px;">
+
+        <!-- LEFT: Logo -->
+        <div class="flex items-center">
+            <a href="/" class="flex items-center h-full">
+                <img src="https://felikstar.com/titans-media/game-of-titans-logo.png"
+                     alt="Game of Titans Logo"
+                     style="height: 48px;"
+                     class="h-12 w-auto object-contain block"/>
             </a>
-
-            <!-- Desktop Navigation -->
-            <div class="hidden md:flex items-center text-black gap-8">
-                <a href="#captains"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">Captains</a>
-                <a href="#seasons"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">Seasons</a>
-                <a href="#prize"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">Prize</a>
-                <a href="#registration-section"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">Register</a>
-                <a href="#about"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">About</a>
-                <a href="#sponsors"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">Sponsors</a>
-                <a href="#contact"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">Contact</a>
-                <button onclick="document.getElementById('registration-section').scrollIntoView({ behavior: 'smooth' })"
-                        class="px-6 py-2 bg-titans-red hover:bg-red-700 text-white font-bold text-sm uppercase tracking-wider rounded-lg transition-colors">
-                    Join Now
-                </button>
-            </div>
-
-            <!-- Mobile Menu Button -->
-            <button id="mobile-menu-btn" class="md:hidden text-black">
-                <i data-lucide="menu" class="size-6"></i>
-            </button>
         </div>
 
-        <!-- Mobile Navigation -->
-        <div id="mobile-menu" class="hidden md:hidden mt-6 pb-4 border-t border-gray-200 pt-4">
-            <div class="flex flex-col gap-4">
-                <a href="#captains"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">Captains</a>
-                <a href="#seasons"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">Seasons</a>
-                <a href="#prize"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">Prize</a>
-                <a href="#registration-section"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">Register</a>
-                <a href="#about"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">About</a>
-                <a href="#sponsors"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">Sponsors</a>
-                <a href="#contact"
-                   class="text-sm font-semibold text-black hover:text-titans-gold transition-colors uppercase tracking-wider">Contact</a>
-                <button onclick="document.getElementById('registration-section').scrollIntoView({ behavior: 'smooth' })"
-                        class="px-6 py-2 bg-titans-red hover:bg-red-700 text-white font-bold text-sm uppercase tracking-wider rounded-lg transition-colors">
-                    Join Now
-                </button>
-            </div>
+        <!-- CENTER: Navigation -->
+        <div class="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
+            <a href="#captains" class="nav-link">Captains</a>
+            <a href="#seasons" class="nav-link">Seasons</a>
+            <a href="#prize" class="nav-link">Prize</a>
+            <a href="{% url 'register' %}" class="nav-link">Register</a>
+            <a href="{% url 'about' %}" class="nav-link">About</a>
+            <a href="{% url 'sponsors' %}" class="nav-link">Sponsors</a>
+            <a href="" class="nav-link">Contact</a>
         </div>
+
+        <!-- RIGHT: CTA -->
+        <div class="hidden md:flex ml-auto">
+            <a href="{% url 'register' %}"
+                    class="btn-primary">
+                Register Now
+            </a>
+        </div>
+
+        <!-- MOBILE MENU BUTTON -->
+        <button id="menu-btn" class="md:hidden text-[#454240]">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+
     </nav>
+
+    <!-- MOBILE OVERLAY -->
+    <div id="mobile-menu"
+         class="fixed inset-0 bg-[#F7F7F7] hidden flex-col items-center justify-center text-center z-[100]"
+         style="background-color: #F7F7F7;">
+
+        <!-- Close Button -->
+        <button id="close-menu" class="absolute top-6 right-6 z-[110]" style="top: 2rem;right:2rem;">
+            <i data-lucide="x" class="w-7 h-7 text-[#454240]"></i>
+        </button>
+
+        <!-- Links -->
+        <div class="flex flex-col gap-8">
+            <a href="#captains" class="mobile-link">Captains</a>
+            <a href="#seasons" class="mobile-link">Seasons</a>
+            <a href="#prize" class="mobile-link">Prize</a>
+            <a href="{% url 'register' %}" class="mobile-link">Register</a>
+            <a href="{% url 'about' %}" class="mobile-link">About</a>
+            <a href="{% url 'sponsors' %}" class="mobile-link">Sponsors</a>
+            <a href="#contact" class="mobile-link">Contact</a>
+        </div>
+
+        <!-- Bottom CTA -->
+        <div class="absolute bottom-10 w-full flex justify-center">
+            <a href="{% url 'register' %}" class="btn-primary px-10 py-3">
+                Register Now
+            </a>
+        </div>
+
+    </div>
+
 </header>

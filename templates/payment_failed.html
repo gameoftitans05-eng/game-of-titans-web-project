@@ -1,20 +1,192 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Payment Failed - Game of Titans</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #000; color: #fff; }
-        .failed { color: #ef4444; font-size: 2.5rem; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Failed — Game of Titans</title>
+
+```
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #F7F7F7;
+        font-family: 'Inter', Arial, sans-serif;
+        color: #454240;
+    }
+
+    .wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .card {
+        max-width: 520px;
+        width: 100%;
+        background: #FFFFFF;
+        border-radius: 6px;
+        padding: 48px 32px;
+        text-align: center;
+
+        border: 2px solid transparent;
+        border-image: linear-gradient(135deg, #D30201, #FF4D4D) 1;
+    }
+
+    .eyebrow {
+        font-size: 11px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: #D30201;
+    }
+
+    .title {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 42px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #5C4E3D;
+        margin-bottom: 16px;
+    }
+
+    .subtitle {
+        font-size: 15px;
+        color: #7A7A7A;
+        margin-bottom: 28px;
+    }
+
+    .details {
+        background: #FAFAFA;
+        border: 1px solid #EBEBEB;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 32px;
+        text-align: left;
+    }
+
+    .row {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .label {
+        color: #7A7A7A;
+    }
+
+    .value {
+        font-weight: 600;
+        color: #5C4E3D;
+    }
+
+    .actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        padding: 14px 24px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-decoration: none;
+        color: #FFFFFF;
+        background: linear-gradient(135deg, #021E8F, #08A4EF);
+    }
+
+    .btn-secondary {
+        padding: 14px 24px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-decoration: none;
+        color: #5C4E3D;
+        border: 1px solid #EBEBEB;
+        background: #FFFFFF;
+    }
+
+    .btn-secondary:hover {
+        border-color: #021E8F;
+    }
+
+    /* MOBILE */
+    @media (max-width: 640px) {
+        .card {
+            padding: 32px 20px;
+        }
+
+        .title {
+            font-size: 32px;
+        }
+
+        .actions {
+            flex-direction: column;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
 </head>
+
 <body>
-    <h1 class="failed">Payment Failed</h1>
-    <p class="details">
-        Order ID: <strong>{{ order_id }}</strong><br>
-        Status: <strong>{{ status }}</strong>
-    </p>
-    <p>Please try again or contact support.</p>
-    <a href="/" style="color: #fbbf24; font-size: 1.2rem;">Back to Home</a>
+
+<div class="wrapper">
+
+
+<div class="card">
+
+    <!-- HEADER -->
+    <div class="eyebrow">Transaction Issue</div>
+
+    <div class="title">
+        Payment Failed
+    </div>
+
+    <div class="subtitle">
+        Your payment could not be completed. Please try again.
+    </div>
+
+    <!-- DETAILS -->
+    <div class="details">
+        <div class="row">
+            <span class="label">Order ID:</span><br>
+            <span class="value">{{ order_id }}</span>
+        </div>
+
+        <div class="row">
+            <span class="label">Message:</span><br>
+            <span class="value">{{ message }}</span>
+        </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+        <a href="/register#athlete" class="btn-primary">
+            Retry Payment
+        </a>
+
+        <a href="/" class="btn-secondary">
+            Back to Home
+        </a>
+    </div>
+
+</div>
+
+
+</div>
+
 </body>
 </html>

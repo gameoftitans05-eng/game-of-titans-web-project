@@ -1,225 +1,337 @@
 from django.db import models
-import re
 import uuid
+import random
 
-# Create your models here.
-class GymModel(models.Model):
-    name = models.CharField(max_length=250, null=True, blank=False)
-    gym_id = models.CharField(max_length=50, null=True, blank=True)
-    contact_number = models.CharField(unique=True, max_length=15, null=True, blank=True)
-    email = models.EmailField(unique=True, null=True, blank=True)
-    website = models.TextField(null=True, blank=True)
-    location = models.JSONField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+# =========================================
+# CONSTANTS
+# =========================================
+MPCG_STATES = ["Madhya Pradesh", "Chhattisgarh"]
 
-    def _clean_name_prefix(self):
-        # Keep only uppercase letters + digits, remove spaces/special chars
-        cleaned = re.sub(r'[^A-Z0-9]', '', self.name.upper())
-        # Take first 6 characters (we'll slice to 6 later if needed)
-        prefix = cleaned[:6]
 
-        # Minimum length fallback (if name is very short/empty after cleaning)
-        if len(prefix) < 3:
-            prefix = (prefix + "GYMXXX")[:6]
+# =========================================
+# GOT EMPLOYEE / USHER
+# =========================================
+class GOTEmployee(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=15)
+    code = models.CharField(max_length=20, unique=True)  # GOT-EMP-XXXX
+    city = models.CharField(max_length=100)
+    event_leg = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
 
-        return prefix
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def generate_code(self):
+        return f"GOT-EMP-{random.randint(1000, 9999)}"
 
     def save(self, *args, **kwargs):
-        if not self.gym_id:
-            # First save without gym_id to get the pk
-            if not self.pk:
-                super().save(*args, **kwargs)  # save once to generate id/pk
+        if not self.code:
+            self.code = self.generate_code()
+        super().save(*args, **kwargs)
 
-            # Now generate gym_id using the pk
-            prefix = self._clean_name_prefix()[:6]  # max 6 chars
-            pk_part = f"{self.pk:04d}"[-4:]  # last 4 digits of pk, zero-padded
-            self.gym_id = (prefix + pk_part)[:10]  # exactly 10 chars
+    def __str__(self):
+        return f"{self.name} ({self.code})"
 
-            # Second save → now with gym_id
-            super().save(update_fields=['gym_id'])
 
+# =========================================
+# GYM
+# =========================================
+class Gym(models.Model):
+    ROLE_CHOICES = [
+        ('owner', 'Owner'),
+        ('manager', 'Manager'),
+        ('coach', 'Head Coach'),
+        ('other', 'Other'),
+    ]
+
+    EVENT_CHOICES = [
+        ('mumbai', 'Mumbai May 23'),
+        ('delhi', 'Delhi Sep 19'),
+        ('bengaluru', 'Bengaluru Feb 6'),
+    ]
+
+    # BASIC
+    name = models.CharField(max_length=255)
+    contact_person = models.CharField(max_length=255)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+
+    email = models.EmailField()
+    phone = models.CharField(max_length=15)
+
+    state = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    address = models.TextField()
+
+    active_members = models.CharField(max_length=50)
+    instagram = models.CharField(max_length=255, blank=True, null=True)
+
+    expected_athletes = models.CharField(max_length=50)
+    event_leg = models.CharField(max_length=50, choices=EVENT_CHOICES)
+
+    got_employee = models.ForeignKey(
+        GOTEmployee,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    # CORE SYSTEM
+    titan_id = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    is_mpcg = models.BooleanField(default=False)
+
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('pending', 'Pending'),
+            ('approved', 'Approved'),
+            ('rejected', 'Rejected')
+        ],
+        default='pending'
+    )
+
+    is_confirmed_by_employee = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def generate_titan_id(self):
+        return f"TITAN-{random.randint(1000, 9999)}"
+
+    def save(self, *args, **kwargs):
+
+        # MPCG LOGIC
+        if self.state in MPCG_STATES:
+            self.is_mpcg = True
+            self.status = 'pending'
         else:
-            super().save(*args, **kwargs)
+            self.is_mpcg = False
+            self.status = 'approved'
+
+        # TITAN ID ONLY FOR NON-MPCG
+        if not self.is_mpcg and not self.titan_id:
+            self.titan_id = self.generate_titan_id()
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.name} ({self.gym_id})"
+        return f"{self.name} ({self.titan_id or 'Pending'})"
 
 
-class MemberModel(models.Model):
+# =========================================
+# ATHLETE
+# =========================================
+class Athlete(models.Model):
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+    ]
+
+    REG_TYPE = [
+        ('gym', 'Gym Participant'),
+        ('individual', 'Individual'),
+    ]
+
+    EVENT_CHOICES = Gym.EVENT_CHOICES
+
+    # BASIC
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=15)
+
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
+
+    state = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+
+    registration_type = models.CharField(max_length=20, choices=REG_TYPE)
+
     gym = models.ForeignKey(
-        'GymModel',
-        on_delete=models.SET_NULL,  # Changed: better for individuals (don't delete member if gym is deleted)
-        related_name='gym_member',
-        null=True,
-        blank=True,
-        help_text="Gym this member belongs to (null for independent participants)"
-    )
-    name = models.CharField(max_length=250, null=True, blank=False)
-    email = models.EmailField(unique=False, null=True, blank=True)
-    contact_number = models.CharField(max_length=15, null=True, blank=True)
-    # ✅ NEW FIELD
-    referred_by = models.ForeignKey(
-        'ReferUserModel',
+        Gym,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True,
-        related_name='referred_members'
+        blank=True
     )
-    gender = models.CharField(
-        max_length=20,
-        choices=[('male', 'Male'), ('female', 'Female'), ('other', 'Other'),
-                 ('prefer_not_to_say', 'Prefer not to say')],
+
+    titan_id_input = models.CharField(max_length=20, blank=True, null=True)
+
+    event_leg = models.CharField(max_length=50, choices=EVENT_CHOICES)
+
+    got_employee = models.ForeignKey(
+        GOTEmployee,
+        on_delete=models.SET_NULL,
         null=True,
-        blank=True,
-        help_text="Participant's gender (optional)"
+        blank=True
     )
-    registration_type = models.CharField(
+
+    referral_code = models.CharField(max_length=50, blank=True, null=True)
+
+    # CORE SYSTEM
+    tracking_id = models.CharField(max_length=20, unique=True, null=True, blank=True)
+
+    payment_status = models.CharField(
         max_length=20,
         choices=[
-            ('gym_member', 'Gym Member'),
-            ('individual', 'Independent / Individual'),
+            ('pending', 'Pending'),
+            ('success', 'Success'),
+            ('failed', 'Failed')
         ],
-        default='individual',
-        help_text="Whether this member is part of a gym or registering independently"
+        default='pending'
     )
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        verbose_name = "Member"
-        verbose_name_plural = "Members"
-        ordering = ['-created_at']
+    is_confirmed_by_employee = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def generate_tracking_id(self):
+        return f"TXN-{random.randint(100000, 999999)}"
+
+    def save(self, *args, **kwargs):
+
+        # MPCG LOGIC
+        if self.state in MPCG_STATES:
+            self.gym = None
+            self.titan_id_input = None
+
+        if not self.tracking_id:
+            self.tracking_id = self.generate_tracking_id()
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        gym_part = f" ({self.gym.gym_id})" if self.gym else ""
-        return f"{self.name or 'Unnamed'} - {self.registration_type}{gym_part}"
-
-    def is_individual(self):
-        return self.registration_type == 'individual'
-
-    def is_gym_member(self):
-        return self.registration_type == 'gym_member'
+        return f"{self.name} ({self.tracking_id})"
 
 
-class EventModel(models.Model):
-    name = models.CharField(max_length=250, null=False, blank=False)
-    location = models.JSONField(null=True, blank=True)
-    participation_amount = models.IntegerField(default=0)
-    schedule_on = models.DateTimeField(null=True, blank=True)
-    from_date = models.DateTimeField(null=True, blank=True)
-    to_date = models.DateTimeField(null=True, blank=True)
-    address = models.TextField(null=True, blank=True)
-    active = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+# =========================================
+# PARTICIPATION
+# =========================================
+class Participation(models.Model):
+    athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
+    gym = models.ForeignKey(Gym, on_delete=models.SET_NULL, null=True, blank=True)
+
+    event_leg = models.CharField(max_length=50)
+    season = models.CharField(max_length=20, default="S1")
+
+    tracking_id = models.CharField(max_length=20, unique=True)
+
+    payment_status = models.CharField(max_length=20)
+    is_confirmed = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
-class ParticipatedMemberModel(models.Model):
-    event = models.ForeignKey('EventModel', on_delete=models.CASCADE, related_name='event_participated')
-    member = models.ForeignKey('MemberModel', on_delete=models.CASCADE, related_name='member_participated')
-    gym = models.ForeignKey(
-        'GymModel',
-        on_delete=models.SET_NULL,
-        related_name='gym_participated',
-        null=True,
-        blank=True,
-        help_text="Gym of the participant (copied from MemberModel for faster queries / historical data)"
-    )
+# =========================================
+# PAYMENT ORDER
+# =========================================
+class PaymentOrder(models.Model):
+    athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
+    participation = models.ForeignKey(Participation, null=True, on_delete=models.CASCADE)
+    order_id = models.CharField(max_length=50, unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=1999)
 
-    # ✅ NEW FIELD
-    referred_by = models.ForeignKey(
-        'ReferUserModel',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='referred_participants'
-    )
-
-    registration_type = models.CharField(
+    status = models.CharField(
         max_length=20,
         choices=[
-            ('gym_member', 'Gym Member'),
-            ('individual', 'Independent / Individual'),
+            ('created', 'Created'),
+            ('success', 'Success'),
+            ('failed', 'Failed')
         ],
-        default='individual',
-        help_text="Registration type at the time of participation"
+        default='created'
     )
-    mail_sent = models.BooleanField(default=True)
-    registration_id = models.CharField(max_length=15, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+
+    gateway_response = models.TextField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.order_id} - {self.status}"
 
 
-class PaymentOrderModel(models.Model):
-    participate_member = models.ForeignKey('ParticipatedMemberModel', on_delete=models.CASCADE,
-                                           related_name='participated_member_order', null=True, blank=True)
-    event = models.ForeignKey('EventModel', on_delete=models.SET_NULL, null=True, blank=True , related_name='event_order')
-    member = models.ForeignKey('MemberModel', on_delete=models.SET_NULL, null=True, blank=True, related_name='member_order')
-    order_id = models.CharField(max_length=30, unique=True, null=False, blank=True)
-    payment_type = models.CharField(max_length=20, default='UPI', null=False, blank=False)
-    amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    pg_response = models.TextField(null=True, blank=True)
-    status = models.CharField(max_length=50, default='CREATED', null=False, blank=False)
-    cancelled = models.BooleanField(default=False)
-    cancel_reason = models.TextField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+# =========================================
+# TRANSACTION
+# =========================================
+class Transaction(models.Model):
+    order = models.ForeignKey(PaymentOrder, on_delete=models.CASCADE)
+
+    transaction_id = models.CharField(max_length=50)
+    status = models.CharField(max_length=50)
+
+    gateway_response = models.TextField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.transaction_id
 
 
-class TransactionModel(models.Model):
-    order = models.ForeignKey('PaymentOrderModel', on_delete=models.CASCADE, related_name='order_transaction')
-    transaction_id = models.CharField(max_length=20, null=False, blank=False)
-    status = models.CharField(max_length=50, null=True, blank=True, default='CREATED')
-    pg_response = models.TextField(null=True, blank=True)
-    cancelled = models.BooleanField(default=False)
-    cancel_reason = models.TextField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+# =========================================
+# REFERRAL USER
+# =========================================
+class ReferUser(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=15, blank=True, null=True)
 
-
-class SponsorModel(models.Model):
-    name = models.CharField(max_length=250, null=False, blank=False)
-    company = models.CharField(max_length=250, null=False, blank=False)
-    email = models.EmailField(null=True, blank=True)
-    contact_number = models.CharField(max_length=15, null=True, blank=True)
-    rejected = models.BooleanField(default=False)
-    message = models.TextField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
-
-
-class ReferUserModel(models.Model):
-    name = models.CharField(max_length=250)
-    email = models.EmailField(null=True, blank=True)
-    contact_number = models.CharField(max_length=15, null=True, blank=True)
-
-    # Optional Gym link
     gym = models.ForeignKey(
-        'GymModel',
+        Gym,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True,
-        related_name='gym_referrers'
+        blank=True
     )
 
     refer_code = models.CharField(max_length=12, unique=True, blank=True)
 
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    def generate_refer_code(self):
-        # Example: GOT + random 6 chars
+    def generate_code(self):
         return f"GOT{uuid.uuid4().hex[:6].upper()}"
 
     def save(self, *args, **kwargs):
         if not self.refer_code:
-            self.refer_code = self.generate_refer_code()
+            self.refer_code = self.generate_code()
         super().save(*args, **kwargs)
-
-    def total_referrals(self):
-        return self.referred_participants.count()
 
     def __str__(self):
         return f"{self.name} ({self.refer_code})"
 
+
+# =========================================
+# SPONSOR (UNCHANGED)
+# =========================================
+class Sponsor(models.Model):
+    name = models.CharField(max_length=255)
+    company = models.CharField(max_length=255)
+
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=15, blank=True, null=True)
+
+    message = models.TextField(blank=True, null=True)
+
+    rejected = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.company
+
+
+# =========================================
+# EMAIL LOG (IMPORTANT FOR PDF FLOW)
+# =========================================
+class EmailLog(models.Model):
+    to_email = models.EmailField()
+    subject = models.CharField(max_length=255)
+
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('pending', 'Pending'),
+            ('sent', 'Sent'),
+            ('failed', 'Failed')
+        ],
+        default='pending'
+    )
+
+    related_gym = models.ForeignKey(Gym, on_delete=models.SET_NULL, null=True, blank=True)
+    related_athlete = models.ForeignKey(Athlete, on_delete=models.SET_NULL, null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)

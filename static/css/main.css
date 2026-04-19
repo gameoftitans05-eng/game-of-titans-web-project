@@ -170,12 +170,9 @@ html,
 */
 
 body {
-  margin: 0;
-  /* 1 */
-  line-height: inherit;
-  /* 2 */
-  background-color: #F2F2F2 !important;
-  color: #000 !important;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-body);
 }
 
 .light {
@@ -493,10 +490,106 @@ textarea {
   resize: vertical;
 }
 
+h1, h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  text-transform: uppercase;
+  color: var(--text-heading);
+}
+
+h1 {
+  font-weight: 800;
+  font-size: 72px;
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  font-weight: 700;
+  font-size: 48px;
+}
+
+h3 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text-heading);
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-body);
+}
+
+.caption {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* BLUE */
+.gradient-border-blue {
+  background:
+    linear-gradient(#F7F7F7, #F7F7F7) padding-box,
+    var(--blue-gradient) border-box;
+  border: 2px solid transparent;
+}
+
+/* WHITE SECTION FIX */
+.gradient-border-blue-white {
+  background:
+    linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+    var(--blue-gradient) border-box;
+  border: 2px solid transparent;
+}
+
 /*
 1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
 2. Set the default placeholder color to the user's configured gray 400 color.
 */
+
+
+.btn-primary {
+  background: linear-gradient(to right, #021E8F, #08A4EF);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 16px 36px;
+  border-radius: 4px;
+  border: none;
+  transition: 0.3s ease;
+}
+
+/* CLEAN HOVER (NO RED) */
+.btn-primary:hover {
+  opacity: 0.7;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-heading);
+  padding: 14px 34px;
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+
+  border: 2px solid transparent;
+  background-image:
+    linear-gradient(#F7F7F7, #F7F7F7),
+    linear-gradient(to right, #021E8F, #08A4EF);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+
+  transition: 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(to right, #021E8F, #08A4EF);
+  color: #FFFFFF;
+}
+
+
 
 input::-moz-placeholder, textarea::-moz-placeholder {
   opacity: 1;
@@ -574,110 +667,12 @@ body {
 
 /* Hero Title */
 
-.hero-title {
-  font-size: clamp(4rem, 15vw, 10rem);
-  line-height: 0.85;
-  letter-spacing: -0.08em;
-  font-weight: 900;
-  text-transform: uppercase;
-  background: linear-gradient(180deg, #ffffff 0%, #DC2626 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 /* CTA Button */
 
-.cta-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  border-radius: 9999px;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-  background: linear-gradient(135deg, var(--titans-red) 0%, #991b1b 100%);
-  box-shadow: 0 0 30px rgba(220, 38, 38, 0.3);
-}
-
-.cta-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 50px rgba(220, 38, 38, 0.5);
-}
-
-.cta-button:active {
-  transform: scale(0.98);
-}
 
 /* Stats Card */
 
-.stats-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  border-width: 1px;
-  border-color: rgb(220 38 38 / 0.3);
-  padding: 2rem;
-  background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, rgb(0 0 0 / 0%) 100%);
-  -webkit-backdrop-filter: blur(10px);
-          backdrop-filter: blur(10px);
-  opacity: 0;
-  transform: translate3d(0, 32px, 0);
-  filter: blur(14px);
-  transition: all 0.76s cubic-bezier(0.22, 0.68, 0, 1);
-  transition-delay: var(--delay, 0ms);
-}
-
-.stats-card.visible {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  filter: blur(0);
-}
-
-.stats-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, transparent 0%, rgba(220, 38, 38, 0.1) 100%);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.stats-card:hover::before {
-  opacity: 1;
-}
-
 /* Registration Card */
-
-.registration-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 1.5rem;
-    border-width: 1px;
-    border-color: rgb(220 38 38 / 0.3);
-    padding: 2.5rem;
-    background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, rgb(0 0 0 / 0%) 100%);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
-    opacity: 0;
-    transform: translateY(40px);
-    transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.registration-card.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 /* Guest Card */
 
@@ -694,48 +689,44 @@ body {
 
 /* Form Input */
 
+/* INPUT BASE */
 .form-input {
-    width: 100%;
-    border-radius: 0.75rem;
-    border-width: 1px;
-    border-color: rgb(220 38 38 / 0.3);
-    background-color: rgb(255 255 255 / 50%);
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 0.75rem;
-    /* color: black; */
-    padding-bottom: 0.75rem;
-    --tw-text-opacity: 1;
-    color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  color: #454240;
+
+  border: 2px solid transparent;
+  border-radius: 4px;
+
+  background:
+    linear-gradient(#F7F7F7, #F7F7F7) padding-box,
+    linear-gradient(135deg, #021E8F, #08A4EF) border-box;
+
+  outline: none;
+  transition: 0.3s ease;
 }
 
-.form-input::-moz-placeholder {
-  --tw-placeholder-opacity: 1;
-  color: rgb(75 85 99 / var(--tw-placeholder-opacity, 1));
+/* INPUT ON WHITE SECTIONS (if needed) */
+.form-input-white {
+  background:
+    linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+    linear-gradient(135deg, #021E8F, #08A4EF) border-box;
 }
 
-.form-input::placeholder {
-  --tw-placeholder-opacity: 1;
-  color: rgb(75 85 99 / var(--tw-placeholder-opacity, 1));
-}
-
-.form-input {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-  color: black;
-}
-
+/* FOCUS STATE */
 .form-input:focus {
-  --tw-border-opacity: 1;
-  border-color: rgb(220 38 38 / var(--tw-border-opacity, 1));
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-  --tw-ring-color: rgb(220 38 38 / 0.2);
-  box-shadow: 0 0 20px rgba(220, 38, 38, 0.2);
+  background:
+    linear-gradient(#F7F7F7, #F7F7F7) padding-box,
+    linear-gradient(135deg, #021E8F, #08A4EF) border-box;
+
+  box-shadow: 0 0 0 2px rgba(8, 164, 239, 0.15);
+}
+
+/* PLACEHOLDER */
+.form-input::placeholder {
+  color: #7A7A7A;
 }
 
 .pointer-events-none {
@@ -1684,9 +1675,20 @@ body {
 /* Custom CSS Variables */
 
 :root {
-  --titans-red: #DC2626;
-  --titans-gold: #F59E0B;
-  --titans-black: #000000;
+  /* BACKGROUNDS */
+  --bg-main: #F7F7F7;
+  --bg-white: #FFFFFF;
+
+  /* TEXT */
+  --text-heading: #5C4E3D;
+  --text-body: #454240;
+  --text-muted: #7A7A7A;
+
+  /* GRADIENTS */
+  --blue-gradient: linear-gradient(135deg, #021E8F, #08A4EF);
+  --red-gradient: linear-gradient(135deg, #6E0001, #D30201);
+  --purple-gradient: linear-gradient(135deg, #BC005A, #7400BD);
+  --yellow-gradient: linear-gradient(135deg, #BB5E25, #FDFBEE);
 }
 
 /* Base Styles */
@@ -1757,17 +1759,19 @@ body {
   border-color: var(--titans-gold);
 }
 
+
+.stats-card {
+  padding: 2rem;
+  border-radius: 8px;
+}
 /* Responsive Adjustments */
 
 @media (max-width: 768px) {
-  .hero-title {
-    font-size: clamp(3rem, 12vw, 6rem);
-    letter-spacing: -0.06em;
-  }
 
   .stats-card {
-    padding: 1.5rem;
-  }
+  padding: 2rem;
+  border-radius: 8px;
+}
 
   .registration-card {
     padding: 2rem;

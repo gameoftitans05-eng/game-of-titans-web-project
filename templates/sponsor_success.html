@@ -1,12 +1,147 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
 <head>
-    <title>Sponsor Registration Success</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsor Registration — Game of Titans</title>
+
+```
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: #F7F7F7;
+        font-family: 'Inter', Arial, sans-serif;
+        color: #454240;
+    }
+
+    .wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .card {
+        max-width: 520px;
+        width: 100%;
+        background: #FFFFFF;
+        border-radius: 6px;
+        padding: 48px 32px;
+        text-align: center;
+
+        border: 2px solid transparent;
+        border-image: linear-gradient(135deg, #021E8F, #08A4EF) 1;
+    }
+
+    .eyebrow {
+        font-size: 11px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 12px;
+        background: linear-gradient(90deg, #021E8F, #08A4EF);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .title {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 42px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #5C4E3D;
+        margin-bottom: 16px;
+    }
+
+    .message {
+        font-size: 15px;
+        color: #7A7A7A;
+        line-height: 1.6;
+        margin-bottom: 28px;
+    }
+
+    .note {
+        font-size: 14px;
+        color: #454240;
+        margin-bottom: 32px;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: center;
+    }
+
+    .btn-primary {
+        padding: 14px 28px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-decoration: none;
+        color: #FFFFFF;
+        background: linear-gradient(135deg, #021E8F, #08A4EF);
+    }
+
+    .btn-primary:hover {
+        opacity: 0.9;
+    }
+
+    /* MOBILE */
+    @media (max-width: 640px) {
+        .card {
+            padding: 32px 20px;
+        }
+
+        .title {
+            font-size: 30px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
 </head>
+
 <body>
-    <h1>Thank You!</h1>
-    <p>Your sponsor registration has been submitted successfully.</p>
-    <p>We will review and get back to you soon.</p>
-    <a href="/">Back to Home</a>
+
+<div class="wrapper">
+
+
+<div class="card">
+
+    <!-- HEADER -->
+    <div class="eyebrow">Sponsorship Request</div>
+
+    <div class="title">
+        Thank You
+    </div>
+
+    <!-- MESSAGE -->
+    <div class="message">
+        Your sponsor registration has been successfully submitted.
+    </div>
+
+    <!-- NOTE -->
+    <div class="note">
+        Our team will review your submission and get in touch with you shortly.
+    </div>
+
+    <!-- ACTION -->
+    <div class="actions">
+        <a href="/" class="btn-primary">
+            Back to Home
+        </a>
+    </div>
+
+</div>
+
+</div>
+
 </body>
 </html>

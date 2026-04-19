@@ -1,320 +1,196 @@
-# admin.py
 from django.contrib import admin
-from django.contrib.admin import AdminSite
 from django.utils.html import format_html
-from import_export import resources, fields
-from import_export.formats.base_formats import XLSX
-from import_export.admin import ExportMixin
-
-
-class CustomAdminSite(AdminSite):
-    site_header = "Game of Titans - Admin Panel"  # ← big blue header
-    site_title = "GoT Admin"  # ← browser tab title
-    index_title = "Welcome to Game of Titans Dashboard"
-
-
-# Create instance
-custom_admin_site = CustomAdminSite(name='custom_admin')
 
 from .models import (
-    GymModel,
-    MemberModel,
-    EventModel,
-    ParticipatedMemberModel,
-    PaymentOrderModel,
-    TransactionModel, SponsorModel, ReferUserModel,
+    Gym,
+    Athlete,
+    Participation,
+    PaymentOrder,
+    GOTEmployee,
+    ReferUser,
+    Sponsor,
+    EmailLog
 )
 
 
-class GymResource(resources.ModelResource):
-    sl_no = fields.Field(column_name='Sl No', readonly=True)
-    gym_name = fields.Field(attribute='name', column_name='Gym Name')
-    contact_person = fields.Field(attribute='name', column_name='Contact person')  # if you have separate field, change it
-    email_id = fields.Field(attribute='email', column_name='Email ID')
-    gym_registered_id = fields.Field(attribute='gym_id', column_name='Gym Registered Id')
-    phone_no = fields.Field(attribute='contact_number', column_name='Phone No')
+# =========================================================
+# GOT EMPLOYEE
+# =========================================================
+@admin.register(GOTEmployee)
+class GOTEmployeeAdmin(admin.ModelAdmin):
+    list_display = ("name", "code", "city", "event_leg", "is_active", "created_at")
+    search_fields = ("name", "code", "email", "phone")
+    list_filter = ("city", "event_leg", "is_active")
 
-    class Meta:
-        model = GymModel
-        fields = ('sl_no', 'gym_name', 'contact_person', 'email_id', 'gym_registered_id', 'phone_no')
-        export_order = ('sl_no', 'gym_name', 'contact_person', 'email_id', 'gym_registered_id', 'phone_no')
+    readonly_fields = ("code", "created_at")
 
-    def dehydrate_sl_no(self, gym):
-        # Assign serial number automatically
-        # Note: for all exported rows, serial will start from 1
-        if not hasattr(self, '_counter'):
-            self._counter = 1
-        value = self._counter
-        self._counter += 1
-        return value
 
-@admin.register(GymModel)
-class GymModelAdmin(ExportMixin, admin.ModelAdmin):
+# =========================================================
+# GYM ADMIN (CRITICAL)
+# =========================================================
+@admin.register(Gym)
+class GymAdmin(admin.ModelAdmin):
     list_display = (
-        'name',
-        'gym_id',
-        'contact_number',
-        'email',
-        'created_at',
-        'gym_members_count',
-    )
-    resource_class = GymResource
-    formats = [XLSX]
-    list_filter = ('created_at',)
-    search_fields = ('name', 'gym_id', 'email', 'contact_number')
-    readonly_fields = ('created_at', 'updated_at', 'gym_id')
-    ordering = ('-created_at',)
-    list_per_page = 20
-
-    fieldsets = (
-        (None, {
-            'fields': ('name', 'gym_id', 'email', 'contact_number')
-        }),
-        ('Additional Info', {
-            'fields': ('website', 'location'),
-            'classes': ('collapse',),
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',),
-        }),
+        "name",
+        "city",
+        "state",
+        "status",
+        "is_mpcg",
+        "titan_id",
+        "got_employee",
+        "created_at"
     )
 
-    def gym_members_count(self, obj):
-        return obj.gym_member.count()
+    list_filter = ("status", "is_mpcg", "state", "event_leg")
+    search_fields = ("name", "email", "phone", "titan_id")
 
-    gym_members_count.short_description = "Members"
+    readonly_fields = (
+        "titan_id",
+        "is_mpcg",
+        "created_at"
+    )
 
+    actions = ["approve_gym", "reject_gym"]
 
-class MemberResource(resources.ModelResource):
-    sl_no = fields.Field(column_name='Sl No', readonly=True)
-    member_name = fields.Field(attribute='name', column_name='Member Name')
-    email = fields.Field(attribute='email', column_name='Email')
-    contact_number = fields.Field(attribute='contact_number', column_name='Contact Number')
-    gender = fields.Field(attribute='gender', column_name='Gender')
-    registration_type = fields.Field(attribute='registration_type', column_name='Registration Type')
+    def approve_gym(self, request, queryset):
+        for gym in queryset:
+            if gym.status != "approved" and not gym.is_mpcg:
+                if not gym.titan_id:
+                    gym.titan_id = gym.generate_titan_id()
+                gym.status = "approved"
+                gym.save()
+        self.message_user(request, "Selected gyms approved.")
 
-    gym_name = fields.Field(column_name='Gym Name')
-    gym_id = fields.Field(column_name='Gym ID')
-    gym_contact = fields.Field(column_name='Gym Contact')
+    def reject_gym(self, request, queryset):
+        queryset.update(status="rejected")
+        self.message_user(request, "Selected gyms rejected.")
 
-    participated = fields.Field(column_name='Participated')
-    events = fields.Field(column_name='Events Participated')
-
-    class Meta:
-        model = MemberModel
-        fields = (
-            'sl_no',
-            'member_name',
-            'email',
-            'contact_number',
-            'gender',
-            'registration_type',
-            'gym_name',
-            'gym_id',
-            'gym_contact',
-            'participated',
-            'events',
-        )
-        export_order = fields
-
-    # Serial number
-    def dehydrate_sl_no(self, obj):
-        if not hasattr(self, '_counter'):
-            self._counter = 1
-        val = self._counter
-        self._counter += 1
-        return val
-
-    # Gym Details
-    def dehydrate_gym_name(self, obj):
-        return obj.gym.name if obj.gym else "N/A"
-
-    def dehydrate_gym_id(self, obj):
-        return obj.gym.gym_id if obj.gym else "N/A"
-
-    def dehydrate_gym_contact(self, obj):
-        return obj.gym.contact_number if obj.gym else "N/A"
-
-    # Participation
-    def dehydrate_participated(self, obj):
-        return "Yes" if obj.member_participated.exists() else "No"
-
-    # Events list
-    def dehydrate_events(self, obj):
-        events = obj.member_participated.select_related('event')
-        return ", ".join([p.event.name for p in events if p.event]) or "N/A"
+    approve_gym.short_description = "Approve selected gyms"
+    reject_gym.short_description = "Reject selected gyms"
 
 
-@admin.register(MemberModel)
-class MemberModelAdmin(ExportMixin, admin.ModelAdmin):
+# =========================================================
+# ATHLETE ADMIN
+# =========================================================
+@admin.register(Athlete)
+class AthleteAdmin(admin.ModelAdmin):
     list_display = (
-        'name',
-        'gym',
-        'email',
-        'gender',
-        'registration_type',
-        'contact_number',
-        'created_at',
+        "name",
+        "email",
+        "phone",
+        "state",
+        "city",
+        "created_at"
     )
 
-    resource_class = MemberResource  # ✅ ADD THIS
-    formats = [XLSX]
+    search_fields = ("name", "email", "phone")
+    list_filter = ("state", "city")
 
-    list_filter = ('gym', 'gender', 'created_at')
-    search_fields = ('name', 'email', 'contact_number', 'gym__name', 'gym__gym_id')
-    raw_id_fields = ('gym',)
-    readonly_fields = ('created_at', 'updated_at')
-    ordering = ('-created_at',)
+    readonly_fields = ("created_at",)
 
 
-@admin.register(EventModel)
-class EventModelAdmin(admin.ModelAdmin):
+# =========================================================
+# PARTICIPATION ADMIN (VERY IMPORTANT)
+# =========================================================
+@admin.register(Participation)
+class ParticipationAdmin(admin.ModelAdmin):
     list_display = (
-        'name',
-        'schedule_on',
-        'active',
-        'created_at',
-        'participants_count',
+        "tracking_id",
+        "athlete",
+        "gym",
+        "event_leg",
+        "payment_status",
+        "is_confirmed",
+        "created_at"
     )
-    list_filter = ('active', 'schedule_on', 'created_at')
-    search_fields = ('name',)
-    readonly_fields = ('created_at', 'updated_at')
-    date_hierarchy = 'schedule_on'
-    ordering = ('-schedule_on',)
 
-    def participants_count(self, obj):
-        return obj.event_participated.count()
+    search_fields = ("tracking_id", "athlete__name", "athlete__email")
+    list_filter = ("event_leg", "payment_status", "is_confirmed")
 
-    participants_count.short_description = "Participants"
+    readonly_fields = (
+        "tracking_id",
+        "athlete",
+        "gym",
+        "event_leg",
+        "created_at"
+    )
+
+    actions = ["confirm_participation"]
+
+    def confirm_participation(self, request, queryset):
+        queryset.update(is_confirmed=True)
+        self.message_user(request, "Selected participations confirmed.")
+
+    confirm_participation.short_description = "Confirm selected participations"
 
 
-@admin.register(ParticipatedMemberModel)
-class ParticipatedMemberModelAdmin(admin.ModelAdmin):
+# =========================================================
+# PAYMENT ORDER ADMIN
+# =========================================================
+@admin.register(PaymentOrder)
+class PaymentOrderAdmin(admin.ModelAdmin):
     list_display = (
-        'member_name',
-        'event_name',
-        'gym_name',
-        'referred_by',
-        'mail_sent',
-        'registration_id',
-        'registration_type',
-        'created_at',
+        "order_id",
+        "athlete",
+        "amount",
+        "status",
+        "created_at"
     )
-    list_filter = ('mail_sent', 'event__active', 'member__gym__name', 'referred_by__refer_code', 'created_at')
-    search_fields = (
-        'member__name',
-        'event__name',
-        'member__gym__name',
-        'registration_id',
-        'referred_by__refer_code',
+
+    search_fields = ("order_id", "athlete__name", "athlete__email")
+    list_filter = ("status",)
+
+    readonly_fields = (
+        "order_id",
+        "athlete",
+        "amount",
+        "gateway_response",
+        "created_at"
     )
-    raw_id_fields = ('event', 'member')
-    readonly_fields = ('created_at', 'updated_at')
-    ordering = ('-created_at',)
-
-    def member_name(self, obj):
-        return obj.member.name if obj.member else "-"
-
-    member_name.short_description = "Member"
-
-    def event_name(self, obj):
-        return obj.event.name if obj.event else "-"
-
-    event_name.short_description = "Event"
-
-    def gym_name(self, obj):
-        return obj.member.gym.name if obj.member and obj.member.gym else "-"
-
-    gym_name.short_description = "Gym"
 
 
-@admin.register(PaymentOrderModel)
-class PaymentOrderModelAdmin(admin.ModelAdmin):
+# =========================================================
+# REFER USER
+# =========================================================
+@admin.register(ReferUser)
+class ReferUserAdmin(admin.ModelAdmin):
+    list_display = ("name", "refer_code", "gym", "created_at")
+    search_fields = ("name", "refer_code")
+    readonly_fields = ("refer_code", "created_at")
+
+
+# =========================================================
+# SPONSOR
+# =========================================================
+@admin.register(Sponsor)
+class SponsorAdmin(admin.ModelAdmin):
+    list_display = ("company", "name", "email", "phone", "created_at")
+    search_fields = ("company", "name", "email")
+    readonly_fields = ("created_at",)
+
+
+# =========================================================
+# EMAIL LOG (IMPORTANT)
+# =========================================================
+@admin.register(EmailLog)
+class EmailLogAdmin(admin.ModelAdmin):
     list_display = (
-        'order_id',
-        'participate_member',
-        'payment_type',
-        'status',
-        'cancelled',
-        'created_at',
-    )
-    list_filter = ('status', 'payment_type', 'cancelled', 'created_at')
-    search_fields = ('order_id', 'participate_member__registration_id')
-    readonly_fields = ('created_at', 'updated_at', 'pg_response')
-    ordering = ('-created_at',)
-    list_per_page = 25
-
-
-@admin.register(TransactionModel)
-class TransactionModelAdmin(admin.ModelAdmin):
-    list_display = (
-        'transaction_id',
-        'order',
-        'status',
-        'cancelled',
-        'created_at',
-    )
-    list_filter = ('status', 'cancelled', 'created_at')
-    search_fields = ('transaction_id', 'order__order_id')
-    readonly_fields = ('created_at', 'updated_at', 'pg_response')
-    ordering = ('-created_at',)
-    list_per_page = 25
-
-
-@admin.register(SponsorModel)
-class SponsorModelAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'company',
-        'email',
-        'contact_number',
-        'rejected',
-        'created_at',
-    )
-    list_filter = ('rejected', 'created_at')
-    search_fields = ('name', 'company', 'email', 'contact_number')
-    readonly_fields = ('created_at', 'updated_at')
-    ordering = ('-created_at',)
-    list_per_page = 25
-
-    fieldsets = (
-        (None, {
-            'fields': ('name', 'company', 'email', 'contact_number', 'rejected')
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
+        "to_email",
+        "subject",
+        "status",
+        "related_gym",
+        "related_athlete",
+        "created_at"
     )
 
+    list_filter = ("status",)
+    search_fields = ("to_email", "subject")
 
-@admin.register(ReferUserModel)
-class ReferUserModelAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'refer_code',
-        'gym',
-        'contact_number',
-        'total_referrals_count',
-        'created_at',
+    readonly_fields = (
+        "to_email",
+        "subject",
+        "status",
+        "related_gym",
+        "related_athlete",
+        "created_at"
     )
-
-    search_fields = ('name', 'refer_code', 'contact_number')
-    list_filter = ('gym', 'created_at')
-    readonly_fields = ('refer_code', 'created_at', 'updated_at')
-
-    def total_referrals_count(self, obj):
-        return obj.referred_participants.count()
-
-    total_referrals_count.short_description = "Total Referrals"
-
-
-custom_admin_site.register(GymModel, GymModelAdmin)
-custom_admin_site.register(MemberModel, MemberModelAdmin)
-custom_admin_site.register(EventModel, EventModelAdmin)
-custom_admin_site.register(ParticipatedMemberModel, ParticipatedMemberModelAdmin)
-custom_admin_site.register(PaymentOrderModel, PaymentOrderModelAdmin)
-custom_admin_site.register(TransactionModel, TransactionModelAdmin)
-custom_admin_site.register(SponsorModel, SponsorModelAdmin)
-custom_admin_site.register(ReferUserModel, ReferUserModelAdmin)
