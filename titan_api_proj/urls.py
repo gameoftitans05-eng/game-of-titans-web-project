@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-# from api.admin import custom_admin_site
+from api.admin import admin_site
 from django.views.generic import TemplateView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -24,7 +24,7 @@ from api import registration_views
 
 urlpatterns = [
     path('superadmin/', admin.site.urls),
-    # path('admin/', custom_admin_site.urls),
+    path('admin/', admin_site.urls),
     path('api/v1/', include('api.urls')),
 
     path('', TemplateView.as_view(template_name='index.html'), name='home'),
