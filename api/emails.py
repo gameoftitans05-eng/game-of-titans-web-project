@@ -43,7 +43,7 @@ def send_got_email(subject, html_content, to_email, gym=None, athlete=None, extr
 
         msg.attach_alternative(html_content, "text/html")
 
-        msg.send(fail_silently=False)
+        msg.send(fail_silently=True)
 
         #  MARK SUCCESS
         log.status = "sent"
