@@ -9,16 +9,18 @@ from .models import (
     GOTEmployee,
     ReferUser,
     Sponsor,
-    EmailLog
+    EmailLog,
+    IncentiveConfig
 )
 
-
 from django.contrib import admin
+
 
 class MyAdminSite(admin.AdminSite):
     site_header = "GOT Admin"
     site_title = "GOT Admin Portal"
     index_title = "GOT Admin"  # keep empty to remove "Site administration"
+
 
 admin_site = MyAdminSite(name="myadmin")
 
@@ -99,6 +101,12 @@ class AthleteAdmin(admin.ModelAdmin):
 # =========================================================
 # PARTICIPATION ADMIN (VERY IMPORTANT)
 # =========================================================
+class PaymentInline(admin.TabularInline):
+    model = PaymentOrder
+    extra = 0
+    readonly_fields = ("order_id", "status", "created_at")
+
+
 class ParticipationAdmin(admin.ModelAdmin):
     list_display = (
         "tracking_id",
@@ -106,9 +114,11 @@ class ParticipationAdmin(admin.ModelAdmin):
         "gym",
         "event_leg",
         "payment_status",
+        "retry_count",  # 🔥 NEW
         "is_confirmed",
         "created_at"
     )
+    inlines = [PaymentInline]
 
     search_fields = ("tracking_id", "athlete__name", "athlete__email")
     list_filter = ("event_leg", "payment_status", "is_confirmed")
@@ -118,16 +128,39 @@ class ParticipationAdmin(admin.ModelAdmin):
         "athlete",
         "gym",
         "event_leg",
+        "payment_status",
+        "retry_count",  # 🔥 NEW
         "created_at"
     )
 
-    actions = ["confirm_participation"]
+    def colored_status(self, obj):
+        color = {
+            "success": "green",
+            "failed": "red",
+            "pending": "orange",
+            "expired": "gray"
+        }.get(obj.payment_status, "black")
+
+        return format_html(
+            '<b style="color:{}">{}</b>',
+            color,
+            obj.payment_status
+        )
+
+    colored_status.short_description = "Status"
+
+    actions = ["confirm_participation", "mark_failed"]
 
     def confirm_participation(self, request, queryset):
-        queryset.update(is_confirmed=True)
-        self.message_user(request, "Selected participations confirmed.")
+        queryset.update(is_confirmed=True, payment_status="success")
+        self.message_user(request, "Marked as confirmed.")
 
-    confirm_participation.short_description = "Confirm selected participations"
+    def mark_failed(self, request, queryset):
+        queryset.update(payment_status="failed")
+        self.message_user(request, "Marked as failed.")
+
+    confirm_participation.short_description = "Mark as SUCCESS"
+    mark_failed.short_description = "Mark as FAILED"
 
 
 # =========================================================
@@ -137,8 +170,10 @@ class PaymentOrderAdmin(admin.ModelAdmin):
     list_display = (
         "order_id",
         "athlete",
+        "participation",
         "amount",
         "status",
+        "retry_of",  # 🔥 NEW
         "created_at"
     )
 
@@ -148,10 +183,27 @@ class PaymentOrderAdmin(admin.ModelAdmin):
     readonly_fields = (
         "order_id",
         "athlete",
+        "participation",
         "amount",
+        "status",
+        "retry_of",
         "gateway_response",
         "created_at"
     )
+
+    actions = ["mark_success", "mark_failed", "mark_expired"]
+
+    def mark_success(self, request, queryset):
+        queryset.update(status="success")
+        self.message_user(request, "Orders marked as SUCCESS")
+
+    def mark_failed(self, request, queryset):
+        queryset.update(status="failed")
+        self.message_user(request, "Orders marked as FAILED")
+
+    def mark_expired(self, request, queryset):
+        queryset.update(status="expired")
+        self.message_user(request, "Orders marked as EXPIRED")
 
 
 # =========================================================
@@ -199,6 +251,14 @@ class EmailLogAdmin(admin.ModelAdmin):
 
 
 
+class IncentiveConfigAdmin(admin.ModelAdmin):
+    list_display = ("gym_rate", "employee_rate", "mpcg_rate", "is_active", "updated_at")
+
+    def has_add_permission(self, request):
+        # Only one config allowed
+        return not IncentiveConfig.objects.exists()
+
+
 admin_site.register(GOTEmployee, GOTEmployeeAdmin)
 admin_site.register(Gym, GymAdmin)
 admin_site.register(Athlete, AthleteAdmin)
@@ -207,4 +267,4 @@ admin_site.register(PaymentOrder, PaymentOrderAdmin)
 admin_site.register(ReferUser, ReferUserAdmin)
 admin_site.register(Sponsor, SponsorAdmin)
 admin_site.register(EmailLog, EmailLogAdmin)
-
+admin_site.register(IncentiveConfig, IncentiveConfigAdmin)

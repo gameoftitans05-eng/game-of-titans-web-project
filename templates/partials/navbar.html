@@ -8,7 +8,7 @@
         <!-- LEFT: Logo -->
         <div class="flex items-center">
             <a href="/" class="flex items-center h-full">
-                <img src="https://felikstar.com/titans-media/game-of-titans-logo.png"
+                <img src="https://felikstar.com/titans-media/images/got_logo_rect_1.png"
                      alt="Game of Titans Logo"
                      style="height: 48px;"
                      class="h-12 w-auto object-contain block"/>
@@ -17,22 +17,22 @@
 
         <!-- CENTER: Navigation -->
         <div class="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
-            <a href="#captains" class="nav-link">Captains</a>
-            <a href="#seasons" class="nav-link">Seasons</a>
-            <a href="#prize" class="nav-link">Prize</a>
+            <a href="{% url 'home' %}#captains" class="nav-link">Captains</a>
+            <a href="{% url 'home' %}#seasons" class="nav-link">Seasons</a>
+            <a href="{% url 'home' %}#prize" class="nav-link">Prize</a>
             <a href="{% url 'register' %}" class="nav-link">Register</a>
             <a href="{% url 'about' %}" class="nav-link">About</a>
             <a href="{% url 'sponsors' %}" class="nav-link">Sponsors</a>
-            <a href="" class="nav-link">Contact</a>
+            <a href="#contact" class="nav-link">Contact</a>
         </div>
 
         <!-- RIGHT: CTA -->
-        <div class="hidden md:flex ml-auto">
-            <a href="{% url 'register' %}"
-                    class="btn-primary">
-                Register Now
-            </a>
-        </div>
+<!--        <div class="hidden md:flex ml-auto">-->
+<!--            <a href="{% url 'register' %}"-->
+<!--                    class="btn-primary">-->
+<!--                Register Now-->
+<!--            </a>-->
+<!--        </div>-->
 
         <!-- MOBILE MENU BUTTON -->
         <button id="menu-btn" class="md:hidden text-[#454240]">

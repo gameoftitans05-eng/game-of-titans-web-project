@@ -1,4 +1,4 @@
-<footer class="footer">
+<footer id="contact" class="footer">
 
     <div class="footer-container">
 
@@ -7,7 +7,7 @@
 
             <!-- COLUMN 1 -->
             <div class="footer-col">
-                <img src="https://felikstar.com/titans-media/game-of-titans-logo.png"
+                <img src="https://felikstar.com/titans-media/images/got-logo-round.png"
                      alt="Game of Titans"
                      style="width: 48px;"
                      class="footer-logo">
@@ -41,9 +41,9 @@
                 <h4 class="footer-heading">Cities</h4>
 
                 <div class="footer-links">
-                    <span>Mumbai — May 23, 2026</span>
-                    <span>Delhi NCR — Sep 19, 2026</span>
-                    <span>Bengaluru — Feb 6, 2027</span>
+                    <a href="{% url 'mumbai' %}"><span>Mumbai — May 23, 2026</span></a>
+                    <a href="{% url 'delhi' %}"><span>Delhi NCR — Sep 19, 2026</span></a>
+                    <a href="{% url 'bengaluru' %}"><span>Bengaluru — Feb 6, 2027</span></a>
                 </div>
             </div>
 

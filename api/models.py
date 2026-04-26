@@ -2,6 +2,8 @@ from django.db import models
 import uuid
 import random
 
+from django.db.models import Q
+
 # =========================================
 # CONSTANTS
 # =========================================
@@ -165,25 +167,9 @@ class Athlete(models.Model):
 
     referral_code = models.CharField(max_length=50, blank=True, null=True)
 
-    # CORE SYSTEM
-    tracking_id = models.CharField(max_length=20, unique=True, null=True, blank=True)
-
-    payment_status = models.CharField(
-        max_length=20,
-        choices=[
-            ('pending', 'Pending'),
-            ('success', 'Success'),
-            ('failed', 'Failed')
-        ],
-        default='pending'
-    )
-
     is_confirmed_by_employee = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def generate_tracking_id(self):
-        return f"TXN-{random.randint(100000, 999999)}"
 
     def save(self, *args, **kwargs):
 
@@ -192,19 +178,24 @@ class Athlete(models.Model):
             self.gym = None
             self.titan_id_input = None
 
-        if not self.tracking_id:
-            self.tracking_id = self.generate_tracking_id()
-
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.name} ({self.tracking_id})"
+        return f"{self.name} ({self.email})"
 
 
 # =========================================
 # PARTICIPATION
 # =========================================
 class Participation(models.Model):
+
+    PAYMENT_STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("success", "Success"),
+        ("failed", "Failed"),
+        ("expired", "Expired"),  # 🔥 NEW (important)
+    ]
+
     athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
     gym = models.ForeignKey(Gym, on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -213,38 +204,70 @@ class Participation(models.Model):
 
     tracking_id = models.CharField(max_length=20, unique=True)
 
-    payment_status = models.CharField(max_length=20)
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+        default="pending"
+    )
+
     is_confirmed = models.BooleanField(default=False)
+
+    retry_count = models.IntegerField(default=0)  # 🔥 NEW (important)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["athlete", "event_leg"]),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["athlete", "event_leg"],
+                condition=Q(payment_status="success"),
+                name="unique_success_participation"
+            )
+        ]
 
 # =========================================
 # PAYMENT ORDER
 # =========================================
 class PaymentOrder(models.Model):
+
+    STATUS_CHOICES = [
+        ("created", "Created"),
+        ("pending", "Pending"),   # 🔥 NEW
+        ("success", "Success"),
+        ("failed", "Failed"),
+        ("expired", "Expired"),  # 🔥 NEW
+    ]
+
     athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
     participation = models.ForeignKey(Participation, null=True, on_delete=models.CASCADE)
+
     order_id = models.CharField(max_length=50, unique=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=1999)
 
     status = models.CharField(
         max_length=20,
-        choices=[
-            ('created', 'Created'),
-            ('success', 'Success'),
-            ('failed', 'Failed')
-        ],
-        default='created'
+        choices=STATUS_CHOICES,
+        default="created"
+    )
+
+    retry_of = models.ForeignKey(   # 🔥 NEW (track retries)
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
     )
 
     gateway_response = models.TextField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"{self.order_id} - {self.status}"
-
+    class Meta:
+        indexes = [
+            models.Index(fields=["athlete", "status"]),
+        ]
 
 # =========================================
 # TRANSACTION
@@ -335,3 +358,16 @@ class EmailLog(models.Model):
     related_athlete = models.ForeignKey(Athlete, on_delete=models.SET_NULL, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class IncentiveConfig(models.Model):
+    gym_rate = models.IntegerField(null=True, blank=True)
+    employee_rate = models.IntegerField(null=True, blank=True)
+    mpcg_rate = models.IntegerField(null=True, blank=True)
+
+    is_active = models.BooleanField(default=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "Active Incentive Config"

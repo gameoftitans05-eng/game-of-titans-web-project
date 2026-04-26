@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -122,23 +122,23 @@ WSGI_APPLICATION = 'titan_api_proj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': config('DB_NAME'),  # Name of your database
-#         'USER': config('DB_USER'),  # Your MySQL username
-#         'PASSWORD': config('DB_PASSWORD'),  # Your MySQL password
-#         'HOST': config('DB_HOST'),  # Host of your MySQL database (use 'localhost' for local MySQL)
-#         'PORT': config('DB_PORT'),  # Default MySQL port
-#     }
-# }
-
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL'),
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),  # Name of your database
+        'USER': config('DB_USER'),  # Your MySQL username
+        'PASSWORD': config('DB_PASSWORD'),  # Your MySQL password
+        'HOST': config('DB_HOST'),  # Host of your MySQL database (use 'localhost' for local MySQL)
+        'PORT': config('DB_PORT'),  # Default MySQL port
+    }
 }
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=config('DATABASE_URL'),
+#         conn_max_age=600
+#     )
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -193,11 +193,12 @@ ADMIN_EMAIL = 'admin@gameoftitans.in'  # Satya (tech only)
 # ── EMAIL ─────────────────────────────────────────────────────────────────────
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False  # IMPORTANT
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
+DEFAULT_FROM_EMAIL = 'Game of Titans <no-reply@gameoftitans.in>'
 
 # ── SECURITY HEADERS — ADD THESE ─────────────────────────────────────────────
 SECURE_BROWSER_XSS_FILTER = True
@@ -211,16 +212,16 @@ X_FRAME_OPTIONS = 'DENY'
 # CASHFREE_TEST_SECRET_KEY=your_PRODUCTION_secret    (keep variable name same)
 # CASHFREE_WEBHOOK_SECRET=your_webhook_secret_key
 
-CASHFREE_CLIENT_ID = config('CASHFREE_PROD_API_KEY')
-CASHFREE_CLIENT_SECRET = config('CASHFREE_PROD_SECRET_KEY')
+CASHFREE_CLIENT_ID = config('CASHFREE_TEST_API_KEY')
+CASHFREE_CLIENT_SECRET = config('CASHFREE_TEST_SECRET_KEY')
 CASHFREE_WEBHOOK_SECRET = config('CASHFREE_WEBHOOK_SECRET', default='')
-CASHFREE_ENV = 'PROD'
+CASHFREE_ENV = 'SANDBOX'
 CASHFREE_API_VERSION = "2025-01-01"
 
 # Very important for redirect after payment
 # ── CASHFREE URLS — PRODUCTION DOMAIN ────────────────────────────────────────
-CASHFREE_RETURN_URL = "https://game-of-titans-web-project-production.up.railway.app/api/v1/payment/success/?order_id={order_id}"
-CASHFREE_NOTIFY_URL = "https://game-of-titans-web-project-production.up.railway.app/api/v1/webhooks/cashfree/"
+CASHFREE_RETURN_URL = "http://127.0.0.1:8000/api/v1/payment/success/?order_id={order_id}"
+CASHFREE_NOTIFY_URL = "http://127.0.0.1:8000/api/v1/webhooks/cashfree/"
 
 CSRF_TRUSTED_ORIGINS = [
     'https://game-of-titans-web-project-production.up.railway.app',
@@ -228,4 +229,6 @@ CSRF_TRUSTED_ORIGINS = [
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+RECAPTCHA_SECRET_KEY = config('RECAPTCHA_SECRET_KEY')
 

@@ -28,6 +28,75 @@ Game of Titans | India's First Structured Cross-Fitness Championship
 Game of Titans is India's first structured cross-fitness championship. Three cities. Celebrity captains. One stage. Register now for Mumbai, Delhi & Bengaluru.
 {% endblock %}
 
+{% block style %}
+
+
+@media (max-width: 768px) {
+
+/* RESET LAYOUT */
+#seasons .timeline-grid > div {
+transform: none !important;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+#seasons .timeline-grid {
+grid-template-columns: 1fr !important;
+gap: 40px !important;
+}
+
+#seasons .timeline-line {
+display: none;
+}
+
+/* ================= DOT CONTROL ================= */
+
+/* Mumbai */
+#seasons .timeline-grid > div:nth-child(1) > div:last-child {
+order: -1;
+margin: 0 auto 16px !important;
+}
+
+/* Delhi (2nd) → already correct → DO NOTHING */
+
+/* Bengaluru */
+#seasons .timeline-grid > div:nth-child(3) > div:last-child {
+order: -1;
+margin: 0 auto 16px !important;
+}
+
+}
+
+/* BUTTON BASE */
+.cta-btn {
+min-width: 180px;
+width: 100%;
+text-align: center;
+}
+
+/* DESKTOP WIDTH */
+@media (min-width: 640px) {
+.cta-btn {
+width: 260px;
+}
+}
+
+.hero-container {
+    max-width: 800px;
+    margin: 20px auto 0;
+    text-align: center;
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+    .hero-container {
+        margin: 90px auto 0;
+    }
+}
+
+{% endblock %}
+
 {% block content %}
 
 <!-- Floating Background Elements -->
@@ -36,21 +105,32 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 <div class="floating-element" style="bottom: 20%; left: 25%; animation-delay: 4s;"></div>
 
 <!-- Hero Section -->
-<section id="hero" class="min-h-screen flex items-center justify-center px-6 bg-white text-center">
+<section id="hero"
+         style="
+        background-image: url('https://felikstar.com/titans-media/images/image.jpeg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    "
+         class="min-h-screen flex items-center justify-center px-6 bg-white text-center">
 
-    <div class="w-full max-w-4xl mx-auto flex flex-col items-center" style="margin-top:4rem;">
+    <!-- Overlay -->
+    <div style="background-color: #00000087;" class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70 z-0"></div>
+
+    <div class="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center" style="margin-top:4rem;">
 
         <!-- LINE 1 — EYEBROW -->
         <p class="text-[11px] md:text-[12px] font-semibold tracking-[0.35em] uppercase mb-6 md:mb-8"
            style="background: linear-gradient(90deg, #021E8F, #08A4EF);
                   -webkit-background-clip: text;
                   -webkit-text-fill-color: transparent;">
-            INDIA'S FIRST STRUCTURED CROSS-FITNESS CHAMPIONSHIP
+            <!--            INDIA'S FIRST STRUCTURED CROSS-FITNESS CHAMPIONSHIP-->
+            INDIA'S FIRST FITNESS CHAMPIONSHIP
         </p>
 
         <!-- LINE 2 — LOGO -->
         <div style="margin-bottom: 3rem; display: flex; justify-content: center;">
-            <img src="/static/images/got_logo.jpg"
+            <img src="https://felikstar.com/titans-media/images/got-logo-round.png"
                  alt="Game of Titans Logo"
                  style="
             display: block;
@@ -63,58 +143,43 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
         </div>
 
         <!-- LINE 3 — EVENT DETAILS -->
-        <p class="text-[15px] md:text-[16px] text-[#7A7A7A] mb-12 md:mb-16">
+        <p style="font-size:18px;font-weight: 600;color:white;" class="text-[15px] md:text-[16px] text-[#7A7A7A] mb-12 md:mb-16">
             Mumbai · May 23, 2026
         </p>
 
         <!-- LINE 4 — CTA BUTTONS -->
-        <div style="
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 16px;
-    margin-top: 40px;
-    flex-wrap: nowrap;
-">
+        <div class="flex justify-center items-center gap-4 mt-10">
 
-            <!-- Primary Button -->
-            <a href="#registration-section"
-               style="
-            padding: 12px 32px;
-            border-radius: 999px;
-            color: white;
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
-            white-space: nowrap;
-            background: linear-gradient(90deg, #021E8F, #08A4EF);
-       ">
-                Register Now
+            <a href="{% url 'register' %}" class="btn-primary flex-1 text-center cta-btn">
+                REGISTER NOW
             </a>
 
-            <!-- Secondary Button -->
-            <a href="#sponsors"
-               style="
-            padding: 12px 32px;
-            border-radius: 999px;
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
-            white-space: nowrap;
-            color: #333;
-            border: 1px solid #D1D5DB;
-            background: transparent;
-       ">
-                Become a Sponsor
+            <a href="{% url 'sponsors' %}" class="btn-primary flex-1 text-center cta-btn">
+                BECOME A SPONSOR
             </a>
 
         </div>
+        <!--        <div class="flex justify-center items-center gap-4 mt-10">-->
+
+        <!--            &lt;!&ndash; Primary Button &ndash;&gt;-->
+        <!--            <a href="{% url 'register' %}"-->
+        <!--               style="min-width:180px;width:260px;"-->
+        <!--               class="btn-primary flex-1 text-center min-w-[180px]">-->
+        <!--                REGISTER NOW-->
+        <!--            </a>-->
+
+        <!--            <a href="{% url 'sponsors' %}"-->
+        <!--               style="min-width:180px;width:260px"-->
+        <!--               class="btn-primary flex-1 text-center min-w-[180px]">-->
+        <!--                BECOME A SPONSOR-->
+        <!--            </a>-->
+
+        <!--        </div>-->
 
         <!-- LINE 5 — SCROLL INDICATOR -->
-        <div class="mt-4 md:mt-6 text-[#7A7A7A] animate-bounce">
-            <i data-lucide="chevron-down" class="w-5 h-5 md:w-6 md:h-6"></i>
-        </div>
+        <!--        <div class="mt-4 md:mt-6 text-[#7A7A7A] animate-bounce">-->
+        <!--            <i data-lucide="chevron-down" class="w-5 h-5 md:w-6 md:h-6"></i>-->
+        <!--        </div>-->
 
     </div>
 
@@ -380,16 +445,16 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 <!--</section>-->
 
 <!-- Competition Architecture Section -->
-<section id="architecture" style="background:#F2F2F2; padding:96px 24px;">
+<section id="architecture" style="background:#F2F2F2; padding:30px 24px;">
 
     <!-- HEADER -->
-    <div style="text-align:center; margin-bottom:80px;">
+    <div style="text-align:center; margin-bottom:30px;">
 
         <!-- EYEBROW -->
         <p style="
             font-family: Inter, sans-serif;
             font-weight: 600;
-            font-size: 11px;
+            font-size: 16px;
             letter-spacing: 3px;
             text-transform: uppercase;
             background: linear-gradient(90deg, #021E8F, #08A4EF);
@@ -404,7 +469,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
         <h2 style="
             font-family: 'Barlow Condensed', sans-serif;
             font-weight: 700;
-            font-size: 48px;
+            font-size: 24px;
             text-transform: uppercase;
             color: #5C4E3D;
             letter-spacing: 1px;
@@ -539,7 +604,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
                 line-height:1.7;
                 color:#454240;
             ">
-                Final squads are locked and pushed into high-stakes cross-city battles where only elite teams survive
+                Final squads are locked and pushed into high-stakes battles where only the elite survive
                 to claim ultimate victory.
             </p>
         </div>
@@ -554,10 +619,11 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
     ">
         <p style="
             font-family: Inter, sans-serif;
-            font-size:16px;
+            font-size:20px;
             font-style:italic;
             color:#7A7A7A;
             line-height:1.6;
+                font-weight: 600;
         ">
             Each celebrity captain begins with ten teams — only the best survive.
         </p>
@@ -652,16 +718,16 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 <!--</section>-->
 
 <!-- Captains Section -->
-<section id="captains" style="background:#F2F2F2; padding:120px 24px;">
+<section id="captains" style="background:#F2F2F2; padding:30px 24px;">
 
     <!-- HEADER -->
-    <div style="text-align:center; margin-bottom:80px;">
+    <div style="text-align:center; margin-bottom:30px;">
 
         <!-- EYEBROW -->
         <p style="
             font-family: Inter, sans-serif;
             font-weight:600;
-            font-size:11px;
+            font-size:16px;
             letter-spacing:3px;
             text-transform:uppercase;
             background: linear-gradient(90deg, #7B2CBF, #C77DFF);
@@ -676,7 +742,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
         <h2 style="
             font-family:'Barlow Condensed', sans-serif;
             font-weight:700;
-            font-size:48px;
+            font-size:24px;
             color:#5C4E3D;
             text-transform:uppercase;
             letter-spacing:1px;
@@ -733,7 +799,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
                 line-height:1.7;
                 color:#454240;
             ">
-                The defining face of the championship—bringing national attention, credibility, and unmatched reach
+                The defining face of the championship, bringing national attention, credibility, and unmatched reach
                 across India.
             </p>
 
@@ -830,19 +896,35 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 
     <!-- PULL QUOTE -->
     <div style="
+        max-width:800px;
+        margin:60px auto 0;
         text-align:center;
-        margin-top:48px;
     ">
         <p style="
-            font-family:'Barlow Condensed', sans-serif;
-            font-weight:600;
-            font-size:32px;
+            font-family: Inter, sans-serif;
+            font-size:20px;
             font-style:italic;
-            color:#5C4E3D;
+            color:#7A7A7A;
+            line-height:1.6;
+                font-weight: 600;
         ">
             "Not everyone makes the final five."
         </p>
     </div>
+    <!--    <div style="-->
+    <!--        text-align:center;-->
+    <!--        margin-top:48px;-->
+    <!--    ">-->
+    <!--        <p style="-->
+    <!--            font-family:'Barlow Condensed', sans-serif;-->
+    <!--            font-weight:600;-->
+    <!--            font-size:32px;-->
+    <!--            font-style:italic;-->
+    <!--            color:#5C4E3D;-->
+    <!--        ">-->
+    <!--            "Not everyone makes the final five."-->
+    <!--        </p>-->
+    <!--    </div>-->
 
 </section>
 <!--<section id="captains" class="py-32 px-6" style="background-color: #F2F2F2;">-->
@@ -933,16 +1015,16 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 <!--</section>-->
 
 <!-- Season Timeline Section -->
-<section id="seasons" style="background:#F2F2F2; padding:120px 24px;">
+<section id="seasons" style="background:#F2F2F2; padding:30px 24px;">
 
     <!-- HEADER -->
-    <div style="text-align:center; margin-bottom:90px;">
+    <div style="text-align:center; margin-bottom:30px;">
 
         <!-- EYEBROW -->
         <p style="
             font-family: Inter, sans-serif;
             font-weight:600;
-            font-size:11px;
+            font-size:16px;
             letter-spacing:3px;
             text-transform:uppercase;
             background: linear-gradient(90deg, #D00000, #FF4D6D);
@@ -957,7 +1039,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
         <h2 style="
             font-family:'Barlow Condensed', sans-serif;
             font-weight:700;
-            font-size:48px;
+            font-size:24px;
             color:#5C4E3D;
             text-transform:uppercase;
             letter-spacing:1px;
@@ -1159,15 +1241,13 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
     </div>
 
     <!-- BOTTOM COPY -->
-    <div style="
-        max-width:800px;
-        margin:80px auto 0;
-        text-align:center;
-    ">
+    <div class="hero-container">
         <p style="
             font-family: Inter, sans-serif;
-            font-size:16px;
-            color:#454240;
+            font-style:italic;
+            font-size:20px;
+            color:#7A7A7A;
+            font-weight:600;
             line-height:1.6;
             margin-bottom:12px;
         ">
@@ -1176,8 +1256,10 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 
         <p style="
             font-family: Inter, sans-serif;
-            font-size:16px;
-            color:#454240;
+            font-style:italic;
+            font-size:20px;
+            color:#7A7A7A;
+            font-weight:600;
             line-height:1.6;
         ">
             Across three cities — six champions emerge.
@@ -1302,16 +1384,16 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 
 
 <!-- Prize Section -->
-<section id="prize" style="background:#FFFFFF; padding:120px 24px;">
+<section id="prize" style="background:#FFFFFF; padding:30px 24px;">
 
     <!-- HEADER -->
-    <div style="text-align:center; margin-bottom:90px;">
+    <div style="text-align:center; margin-bottom:30px;">
 
         <!-- EYEBROW -->
         <p style="
             font-family: Inter, sans-serif;
             font-weight:600;
-            font-size:11px;
+            font-size:16px;
             letter-spacing:3px;
             text-transform:uppercase;
             background: linear-gradient(90deg, #FFD60A, #FFC300);
@@ -1326,7 +1408,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
         <h2 style="
             font-family:'Barlow Condensed', sans-serif;
             font-weight:700;
-            font-size:48px;
+            font-size:24px;
             color:#5C4E3D;
             text-transform:uppercase;
             letter-spacing:1px;
@@ -1460,14 +1542,15 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
     <!-- FOOTNOTE -->
     <div style="
         max-width:800px;
-        margin:70px auto 0;
+        margin:60px auto 0;
         text-align:center;
     ">
         <p style="
             font-family: Inter, sans-serif;
             font-style:italic;
-            font-size:16px;
+            font-size:20px;
             color:#7A7A7A;
+            font-weight:600;
             line-height:1.6;
         ">
             Winners earn more than prize money — they earn recognition, visibility, and a place in India’s fitness
@@ -1557,16 +1640,16 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 
 <!--</section>-->
 
-<section id="faces" style="background:#F2F2F2; padding:120px 24px;">
+<section id="faces" style="background:#F2F2F2; padding:30px 24px;">
 
     <!-- HEADER -->
-    <div style="text-align:center; margin-bottom:80px;">
+    <div style="text-align:center; margin-bottom:30px;">
 
         <!-- EYEBROW -->
         <p style="
             font-family: Inter, sans-serif;
             font-weight:600;
-            font-size:11px;
+            font-size:16px;
             letter-spacing:3px;
             text-transform:uppercase;
             background: linear-gradient(90deg, #7B2CBF, #C77DFF);
@@ -1581,7 +1664,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
         <h2 style="
             font-family:'Barlow Condensed', sans-serif;
             font-weight:700;
-            font-size:48px;
+            font-size:24px;
             color:#5C4E3D;
             text-transform:uppercase;
             letter-spacing:1px;
@@ -1611,7 +1694,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
         ">
 
             <!-- IMAGE -->
-            <img src="/static/images/sonu_sood.jpg"
+            <img src="https://felikstar.com/titans-media/images/sonu_sood.jpg"
                  alt="Sonu Sood"
                  style="
                     width:100%;
@@ -1673,7 +1756,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
         ">
 
             <!-- IMAGE -->
-            <img src="/static/images/dino_morea.jpg"
+            <img src="https://felikstar.com/titans-media/images/dino_morea.jpg"
                  alt="Dino Morea"
                  style="
                     width:100%;
@@ -1845,16 +1928,16 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 
 
 <!-- Streaming Partner Section -->
-<section id="streamer" style="background:#F2F2F2; padding:120px 24px;">
+<section id="streamer" style="background:#F2F2F2; padding:30px 24px;">
 
     <!-- HEADER -->
-    <div style="text-align:center; margin-bottom:90px;">
+    <div style="text-align:center; margin-bottom:30px;">
 
         <!-- EYEBROW -->
         <p style="
             font-family: Inter, sans-serif;
             font-weight:600;
-            font-size:11px;
+            font-size:16px;
             letter-spacing:3px;
             text-transform:uppercase;
             background: linear-gradient(90deg, #021E8F, #08A4EF);
@@ -1869,7 +1952,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
         <h2 style="
             font-family:'Barlow Condensed', sans-serif;
             font-weight:700;
-            font-size:48px;
+            font-size:24px;
             color:#5C4E3D;
             text-transform:uppercase;
             letter-spacing:1px;
@@ -1880,7 +1963,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
     </div>
 
     <!-- WAVES LOGO -->
-    <div style="text-align:center; margin-bottom:70px;">
+    <div style="text-align:center; margin-bottom:30px;">
 
         <div style="
     width:100%;
@@ -1888,9 +1971,9 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
     justify-content:center;
     align-items:center;
     text-align:center;
-    margin-bottom:70px;
+    margin-bottom:30px;
 ">
-            <img src="/static/images/waves-logo.png"
+            <img src="https://felikstar.com/titans-media/images/waves-logo.jpeg"
                  alt="WAVES OTT Logo"
                  style="
             max-height:80px;
@@ -1905,7 +1988,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
             font-family: Inter, sans-serif;
             font-size:12px;
             color:#7A7A7A;
-            margin-top:10px;
+<!--            margin-top:10px;-->
         ">
             Request proper PNG logo file from WAVES team. Do not use JPEG assets.
         </p>
@@ -2053,7 +2136,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 
     <!-- INFO STRIP -->
     <div style="
-        margin-top:80px;
+        margin-top:60px;
         background:#EBEBEB;
         padding:32px;
         text-align:center;
@@ -2326,16 +2409,16 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 <!--    </div>-->
 <!--</section>-->
 
-<section id="register" style="background:#F7F7F7; padding:120px 24px;">
+<section id="register" style="background:#F7F7F7; padding:30px 24px;">
 
     <!-- HEADER -->
-    <div style="text-align:center; margin-bottom:80px;">
+    <div style="text-align:center; margin-bottom:30px;">
 
         <!-- EYEBROW -->
         <p style="
             font-family: Inter, sans-serif;
             font-weight:600;
-            font-size:11px;
+            font-size:16px;
             letter-spacing:3px;
             text-transform:uppercase;
             background: linear-gradient(90deg, #FF3B30, #FF6B6B);
@@ -2350,7 +2433,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
         <h2 style="
             font-family:'Barlow Condensed', sans-serif;
             font-weight:700;
-            font-size:48px;
+            font-size:24px;
             color:#5C4E3D;
             text-transform:uppercase;
             letter-spacing:1px;
@@ -2466,18 +2549,18 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 </section>
 
 
-<section id="about" style="background:#F7F7F7; padding:120px 24px;">
+<section id="about" style="background:#F7F7F7; padding:30px 24px;">
 
     <div style="max-width:1200px; margin:0 auto;">
 
         <!-- HEADER -->
-        <div style="text-align:center; margin-bottom:90px;">
+        <div style="text-align:center; margin-bottom:30px;">
 
             <!-- EYEBROW -->
             <p style="
                 font-family: Inter, sans-serif;
                 font-weight:600;
-                font-size:11px;
+                font-size:12px;
                 letter-spacing:3px;
                 text-transform:uppercase;
                 background: linear-gradient(90deg, #021E8F, #08A4EF);
@@ -2492,7 +2575,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
             <h2 style="
                 font-family:'Barlow Condensed', sans-serif;
                 font-weight:700;
-                font-size:48px;
+                font-size:24px;
                 color:#5C4E3D;
                 text-transform:uppercase;
                 letter-spacing:1px;
@@ -2517,7 +2600,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
                 <h3 style="
                     font-family: Inter, sans-serif;
                     font-weight:700;
-                    font-size:24px;
+                    font-size:16px;
                     color:#5C4E3D;
                     margin-bottom:24px;
                 ">
@@ -2525,15 +2608,29 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
                 </h3>
 
                 <!-- BODY COPY (PLACEHOLDER FOR PDF CONTENT) -->
+                <!-- BODY COPY -->
                 <div style="
-                    font-family: Inter, sans-serif;
-                    font-size:16px;
-                    color:#454240;
-                    line-height:1.7;
-                    margin-bottom:40px;
-                ">
-                    <!-- Paste PDF content here exactly as-is -->
-                    <p>[CONTENT FROM CONCEPT NOTE PDF PAGE 2 — DO NOT PARAPHRASE]</p>
+    font-family: Inter, sans-serif;
+    font-size:16px;
+    color:#454240;
+    line-height:1.7;
+    margin-bottom:40px;
+">
+
+                    <p style="margin-bottom:16px;">
+                        Game of Titans isn't just another fitness competition—it's a battlefield where the strongest,
+                        fastest, and most resilient athletes in India clash for glory. This revolutionary IP brings
+                        together cross fitness athletes and enthusiasts from every corner of the nation, creating an
+                        electrifying spectacle of human potential and athletic excellence.
+                    </p>
+
+                    <p>
+                        Season One marks the dawn of a new era in Indian fitness sports. With three high-stakes legs
+                        spanning the country's major cities, Game of Titans promises to captivate audiences, inspire
+                        millions, and crown true champions who embody the spirit of competition, determination, and
+                        victory.
+                    </p>
+
                 </div>
 
                 <!-- VALUE PROPS -->
@@ -2611,16 +2708,16 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 </section>
 
 
-<section id="whygot" style="background:#F7F7F7; padding:120px 24px;">
+<section id="whygot" style="background:#F7F7F7; padding:30px 24px;">
 
     <!-- HEADER -->
-    <div style="text-align:center; margin-bottom:90px;">
+    <div style="text-align:center; margin-bottom:30px;">
 
         <!-- EYEBROW -->
         <p style="
             font-family: Inter, sans-serif;
             font-weight:600;
-            font-size:11px;
+            font-size:16px;
             letter-spacing:3px;
             text-transform:uppercase;
             background: linear-gradient(90deg, #7B2CBF, #C77DFF);
@@ -2635,7 +2732,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
         <h2 style="
             font-family:'Barlow Condensed', sans-serif;
             font-weight:700;
-            font-size:48px;
+            font-size:24px;
             color:#5C4E3D;
             text-transform:uppercase;
             letter-spacing:1px;
@@ -2651,7 +2748,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
         margin:0 auto;
         display:grid;
         grid-template-columns:repeat(2,1fr);
-        gap:40px;
+        gap:20px;
     " class="why-grid">
 
         <!-- CARD 1 — HUMAN STORIES (BLUE) -->
@@ -2692,7 +2789,8 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
                 color:#454240;
                 line-height:1.7;
             ">
-                Their journeys, struggles, resilience, and breakthroughs create deep emotional connections that inspire audiences far beyond sport.
+                Their journeys, struggles, resilience, and breakthroughs create deep emotional connections that inspire
+                audiences far beyond sport.
             </p>
 
         </div>
@@ -2735,7 +2833,8 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
                 color:#454240;
                 line-height:1.7;
             ">
-                The format creates relentless pressure where performance determines survival and every round can completely change the outcome.
+                The format creates relentless pressure where performance determines survival and every round can
+                completely change the outcome.
             </p>
 
         </div>
@@ -2778,7 +2877,8 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
                 color:#454240;
                 line-height:1.7;
             ">
-                Influential captains bring mainstream visibility, expanding the audience beyond fitness into mass entertainment.
+                Influential captains bring mainstream visibility, expanding the audience beyond fitness into mass
+                entertainment.
             </p>
 
         </div>
@@ -2821,7 +2921,8 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
                 color:#454240;
                 line-height:1.7;
             ">
-                Three cities, multiple communities, and a unified national championship structure that builds regional intensity and national prestige.
+                Three cities, multiple communities, and a unified national championship structure that builds regional
+                intensity and national prestige.
             </p>
 
         </div>
@@ -2831,15 +2932,15 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 </section>
 
 
-<section id="sponsors" class="py-32 px-6" style="background-color:#F2F2F2;">
+<section id="sponsors" class="py-32 px-6" style="background-color:#F2F2F2;padding:30px 24px;">
 
     <div class="max-w-7xl mx-auto">
 
         <!-- HEADER -->
-        <div class="text-center mb-20">
+        <div class="text-center mb-20" style="margin-bottom:30px;">
 
             <p style="
-                font-size:11px;
+                font-size:16px;
                 letter-spacing:3px;
                 font-weight:600;
                 text-transform:uppercase;
@@ -2853,7 +2954,7 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
             <h2 style="
                 font-family:'Barlow Condensed', sans-serif;
                 font-weight:700;
-                font-size:48px;
+                font-size:24px;
                 text-transform:uppercase;
                 color:#5C4E3D;">
                 BECOME A SPONSOR
@@ -2925,51 +3026,47 @@ Game of Titans is India's first structured cross-fitness championship. Three cit
 
                 <form id="sponsor-form" class="space-y-5">
 
-                    <!-- Company -->
-                    <div>
-                        <label style="font-size:13px;font-weight:500;color:#5C4E3D;">Company Name</label>
-                        <input type="text"
-                               style="width:100%;padding:14px 16px;border:1px solid #EBEBEB;border-radius:4px;font-size:15px;color:#454240;margin-top:6px;"
-                               onfocus="this.style.border='2px solid transparent';this.style.borderImage='linear-gradient(135deg,#021E8F,#08A4EF) 1';"
-                               onblur="this.style.border='1px solid #EBEBEB'">
-                    </div>
+    <!-- Company -->
+    <div>
+        <label style="font-size:13px;font-weight:500;color:#5C4E3D;">Company Name</label>
+        <input name="company" type="text"
+               style="width:100%;padding:14px 16px;border:1px solid #EBEBEB;border-radius:4px;font-size:15px;color:#454240;margin-top:6px;">
+    </div>
 
-                    <!-- Contact -->
-                    <div>
-                        <label style="font-size:13px;font-weight:500;color:#5C4E3D;">Contact Person</label>
-                        <input type="text" style="width:100%;padding:14px 16px;border:1px solid #EBEBEB;border-radius:4px;font-size:15px;color:#454240;margin-top:6px;">
-                    </div>
+    <!-- Contact -->
+    <div>
+        <label style="font-size:13px;font-weight:500;color:#5C4E3D;">Contact Person</label>
+        <input name="name" type="text"
+               style="width:100%;padding:14px 16px;border:1px solid #EBEBEB;border-radius:4px;font-size:15px;color:#454240;margin-top:6px;">
+    </div>
 
-                    <!-- Email -->
-                    <div>
-                        <label style="font-size:13px;font-weight:500;color:#5C4E3D;">Email</label>
-                        <input type="email" style="width:100%;padding:14px 16px;border:1px solid #EBEBEB;border-radius:4px;font-size:15px;color:#454240;margin-top:6px;">
-                    </div>
+    <!-- Email -->
+    <div>
+        <label style="font-size:13px;font-weight:500;color:#5C4E3D;">Email</label>
+        <input name="email" type="email"
+               style="width:100%;padding:14px 16px;border:1px solid #EBEBEB;border-radius:4px;font-size:15px;color:#454240;margin-top:6px;">
+    </div>
 
-                    <!-- Phone -->
-                    <div>
-                        <label style="font-size:13px;font-weight:500;color:#5C4E3D;">Phone</label>
-                        <input type="tel" style="width:100%;padding:14px 16px;border:1px solid #EBEBEB;border-radius:4px;font-size:15px;color:#454240;margin-top:6px;">
-                    </div>
+    <!-- Phone -->
+    <div>
+        <label style="font-size:13px;font-weight:500;color:#5C4E3D;">Phone</label>
+        <input name="contact_number" type="tel"
+               style="width:100%;padding:14px 16px;border:1px solid #EBEBEB;border-radius:4px;font-size:15px;color:#454240;margin-top:6px;">
+    </div>
 
-                    <!-- Message -->
-                    <div>
-                        <label style="font-size:13px;font-weight:500;color:#5C4E3D;">Message</label>
-                        <textarea rows="4"
-                                  style="width:100%;padding:14px 16px;border:1px solid #EBEBEB;border-radius:4px;font-size:15px;color:#454240;margin-top:6px;"></textarea>
-                    </div>
+    <!-- Message -->
+    <div>
+        <label style="font-size:13px;font-weight:500;color:#5C4E3D;">Message</label>
+        <textarea name="message" rows="4"
+                  style="width:100%;padding:14px 16px;border:1px solid #EBEBEB;border-radius:4px;font-size:15px;color:#454240;margin-top:6px;"></textarea>
+    </div>
 
-                    <!-- Submit -->
-                    <button type="submit" class="btn-primary w-full">
-                        Submit Inquiry
-                    </button>
+    <!-- Submit -->
+    <button type="submit" class="btn-primary w-full">
+        Submit Inquiry
+    </button>
 
-                    <!-- Note -->
-                    <p style="text-align:center;font-size:12px;color:#7A7A7A;margin-top:10px;">
-                        Our partnerships team will respond within 48 hours.
-                    </p>
-
-                </form>
+</form>
 
                 <!-- reCAPTCHA placeholder -->
                 <div style="margin-top:16px;">

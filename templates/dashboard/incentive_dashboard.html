@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GOT Incentive Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+<div class="max-w-7xl mx-auto p-6">
+
+
+<!-- HEADER -->
+<div class="mb-8">
+    <h1 class="text-3xl font-bold">GOT Incentive Dashboard</h1>
+    <p class="text-gray-500">Weekly performance & payout overview</p>
+</div>
+
+<!-- SUMMARY CARDS -->
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-sm text-gray-500">Registrations</p>
+        <h2 class="text-xl font-bold">{{ summary.total }}</h2>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-sm text-gray-500">Gross</p>
+        <h2 class="text-xl font-bold">₹{{ summary.gross }}</h2>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-sm text-gray-500">Gateway Fees</p>
+        <h2 class="text-xl font-bold">₹{{ summary.gateway }}</h2>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-sm text-gray-500">Incentive Budget</p>
+        <h2 class="text-xl font-bold">₹{{ summary.budget }}</h2>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-sm text-gray-500">Net</p>
+        <h2 class="text-xl font-bold text-green-600">₹{{ summary.net }}</h2>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl shadow">
+        <p class="text-sm text-gray-500">Iqbal (7%)</p>
+        <h2 class="text-xl font-bold text-blue-600">₹{{ summary.iqbal }}</h2>
+    </div>
+
+</div>
+
+<!-- GYM EARNINGS -->
+<div class="bg-white rounded-xl shadow p-6 mb-10">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">🏋️ Gym Earnings</h2>
+        <a href="/admin/export-gym/"
+           class="text-sm bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800">
+            Export CSV
+        </a>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="border-b">
+                    <th class="py-3 px-2 text-sm text-gray-500">Gym ID</th>
+                    <th class="py-3 px-2 text-sm text-gray-500">Total Earnings</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for g in gym_data %}
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="py-3 px-2 font-medium">{{ g.gym_id }}</td>
+                    <td class="py-3 px-2 text-green-600 font-semibold">
+                        ₹{{ g.payout }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="py-4 text-center text-gray-400">
+                        No data available
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- EMPLOYEE EARNINGS -->
+<div class="bg-white rounded-xl shadow p-6 mb-10">
+    <h2 class="text-xl font-semibold mb-4">👨‍💼 Employee Earnings</h2>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="border-b">
+                    <th class="py-3 px-2 text-sm text-gray-500">Employee ID</th>
+                    <th class="py-3 px-2 text-sm text-gray-500">Total Earnings</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in employee_data %}
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="py-3 px-2 font-medium">{{ e.employee_id }}</td>
+                    <td class="py-3 px-2 text-blue-600 font-semibold">
+                        ₹{{ e.payout }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="py-4 text-center text-gray-400">
+                        No data available
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- CONFIG -->
+<div class="bg-white rounded-xl shadow p-6">
+    <h2 class="text-xl font-semibold mb-4">⚙️ Current Rates (Admin Only)</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="text-sm text-gray-500">Gym Rate</p>
+            <h3 class="text-lg font-bold">₹{{ config.gym_rate }}</h3>
+        </div>
+
+        <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="text-sm text-gray-500">Employee Rate</p>
+            <h3 class="text-lg font-bold">₹{{ config.employee_rate }}</h3>
+        </div>
+
+        <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="text-sm text-gray-500">MPCG Rate</p>
+            <h3 class="text-lg font-bold">₹{{ config.mpcg_rate }}</h3>
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+</body>
+</html>

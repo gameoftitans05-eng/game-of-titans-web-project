@@ -21,9 +21,12 @@ from django.views.generic import TemplateView
 from django.conf import settings
 from django.conf.urls.static import static
 from api import registration_views
+from api.dashboard import incentive_dashboard
+
 
 urlpatterns = [
     path('superadmin/', admin.site.urls),
+    path('admin/dashboard/', incentive_dashboard),
     path('admin/', admin_site.urls),
     path('api/v1/', include('api.urls')),
 
