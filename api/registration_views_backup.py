@@ -24,6 +24,8 @@ from rest_framework.response import Response
 from cashfree_pg.api_client import Cashfree
 from cashfree_pg.models import CreateOrderRequest, CustomerDetails, OrderMeta
 
+from .emails import email_mpcg_pending, email_mpcg_lead, email_employee_gym, email_gym_confirmation, \
+    email_athlete_confirmation, email_employee_athlete
 from .models import Gym, Athlete, PaymentOrder, Sponsor, GOTEmployee, MPCG_STATES, Participation, EmailLog
 
 # =========================================================
@@ -46,7 +48,7 @@ def init_cashfree():
     """
     try:
         environment = Cashfree.SANDBOX if getattr(settings, 'CASHFREE_ENV',
-                                                     'SANDBOX') == 'SANDBOX' else Cashfree.PRODUCTION
+                                                  'SANDBOX') == 'SANDBOX' else Cashfree.PRODUCTION
 
         cf = Cashfree(
             XClientId=settings.CASHFREE_CLIENT_ID,
@@ -92,7 +94,7 @@ def send_got_email(subject, html_content, to_email, gym=None, athlete=None, extr
             cc=INTERNAL_CC
         )
         msg.attach_alternative(html_content, "text/html")
-        msg.send(fail_silently=True)
+        msg.send(fail_silently=False)
 
         print(f"Email sent to {to_email}, CC: {cc_list}")
 
@@ -251,28 +253,8 @@ def register_gym(request):
         if gym.is_mpcg:
 
             # Email 2 → Gym Pending
-            send_got_email(
-                subject="Game of Titans — Your Registration is Being Processed",
-                to_email=gym.email,
-                html_content=f"""
-                Dear {gym.name},<br><br>
-                Thank you for registering.<br><br>
-                Our MP & Chhattisgarh Regional Partner will contact you within 48 hours to complete onboarding.<br><br>
-                For queries: mpcg@gameoftitans.in
-                """
-            )
-
-            # Email 3 → Regional Partner
-            send_internal_alert(
-                subject="New Gym Lead — MP/CG — Action Required Within 48 Hours",
-                message=f"""
-                Gym: {gym.name}
-                Contact: {gym.contact_person}
-                Phone: {gym.phone}
-                City: {gym.city}
-                Expected Athletes: {gym.expected_athletes}
-                """
-            )
+            email_mpcg_pending(gym)
+            email_mpcg_lead(gym)
 
             return JsonResponse({
                 "success": True,
@@ -298,27 +280,11 @@ def register_gym(request):
         else:
 
             # Email 1 → Gym Confirmation
-            send_got_email(
-                subject="Welcome to Game of Titans — Your Titan Gym ID is Ready",
-                to_email=gym.email,
-                html_content=f"""
-                Dear {gym.name},<br><br>
-                Your Titan Gym ID:<br>
-                <h2>{gym.titan_id}</h2><br>
-                Share this ID with your athletes.<br><br>
-                """
-            )
+            email_gym_confirmation(gym)
 
             # Internal notification (Employee)
             if gym.got_employee:
-                send_internal_alert(
-                    subject=f"New Gym Registered Under You — {gym.name} | {gym.city}",
-                    message=f"""
-                    Gym: {gym.name}
-                    Phone: {gym.phone}
-                    Titan ID: {gym.titan_id}
-                    """
-                )
+                email_employee_gym(gym)
 
             return JsonResponse({
                 "success": True,
@@ -360,6 +326,7 @@ def register_gym(request):
 def initiate_participation(request):
     try:
         data = request.data
+        print(data)
 
         # ─────────────────────────────────────────
         # REQUIRED FIELDS
@@ -450,20 +417,25 @@ def initiate_participation(request):
                     "gender": gender,
                     "state": state,
                     "city": city,
+                    "event_leg": event_leg,
+                    "registration_type": registration_type,
+                    "got_employee": employee,
+                    "gym": gym,
+                    "titan_id_input": titan_id_input
                 }
             )
 
-            athlete.name = name
-            athlete.phone = phone
-            athlete.state = state
-            athlete.city = city
-            athlete.event_leg = event_leg
-            athlete.registration_type = registration_type
-            athlete.got_employee = employee
-            if registration_type == "gym":
-                athlete.gym = gym
-                athlete.titan_id = titan_id_input
-            athlete.save()
+            # athlete.name = name
+            # athlete.phone = phone
+            # athlete.state = state
+            # athlete.city = city
+            # athlete.event_leg = event_leg
+            # athlete.registration_type = registration_type
+            # athlete.got_employee = employee
+            # if registration_type == "gym":
+            #     athlete.gym = gym
+            #     athlete.titan_id_input = titan_id_input
+            # athlete.save()
 
             # ─────────────────────────────
             # CHECK EXISTING PARTICIPATION
@@ -501,6 +473,7 @@ def initiate_participation(request):
             participation = Participation.objects.create(
                 athlete=athlete,
                 event_leg=event_leg,
+                gym=athlete.gym if registration_type == "gym" else None,
                 tracking_id=f"TXN-{uuid.uuid4().hex[:6].upper()}",
                 payment_status="pending"
             )
@@ -576,7 +549,7 @@ def initiate_participation(request):
                 customer_details=customer,
                 order_meta=meta,
                 order_note=f"Game of Titans — {event_leg} — "
-                           f"{'Gym: ' + gym.id if gym else 'Individual'}",
+                            f"{f'Gym: {gym.id}' if gym else 'Individual'}",
             )
 
             cf_response = cf.PGCreateOrder(
@@ -585,7 +558,6 @@ def initiate_participation(request):
             )
 
             print(cf_response.data)
-
 
             return Response({
                 "success": True,
@@ -692,40 +664,13 @@ def payment_success(request):
         # EMAIL 7 — ATHLETE CONFIRMATION
         # ─────────────────────────────────────────
         if athlete.email:
-            email_html = f"""
-            <h2>Registration Successful. You Are a Titan.</h2>
-            <p>Dear {athlete.name},</p>
-
-            <p>Your Tracking ID:</p>
-            <h1>{participation.tracking_id}</h1>
-
-            <p>Event: {participation.event_leg}</p>
-            <p>Gym: {gym.name if gym else 'Independent Athlete'}</p>
-
-            <p>Save your Tracking ID for future communication.</p>
-            """
-
-            # send_got_email(
-            #     subject="You're a Titan. Welcome to Game of Titans.",
-            #     to_email=athlete.email,
-            #     html_content=email_html
-            # )
+            email_athlete_confirmation(participation)
 
         # ─────────────────────────────────────────
         # EMAIL 8 — EMPLOYEE NOTIFICATION
         # ─────────────────────────────────────────
         if participation.athlete.got_employee:
-            emp = participation.athlete.got_employee
-
-            # send_internal_alert(
-            #     subject=f"New Athlete Registered Under You — {athlete.name}",
-            #     message=f"""
-            #     Athlete: {athlete.name}
-            #     Phone: {athlete.phone}
-            #     Tracking ID: {participation.tracking_id}
-            #     Event: {participation.event_leg}
-            #     """
-            # )
+            email_employee_athlete(participation)
 
         # ─────────────────────────────────────────
         # SUCCESS PAGE
@@ -743,13 +688,13 @@ def payment_success(request):
 
 
     except PaymentOrder.DoesNotExist:
-        # send_satya_technical_ping("Payment Success Error", "Order not found. Contact support.")
+        send_satya_technical_ping("Payment Success Error", "Order not found. Contact support.")
         return render(request, "payment_error.html", {
             "message": "Order not found. Contact support."
         })
 
     except Exception as e:
-        # send_satya_technical_ping("Payment Success Error", str(e))
+        send_satya_technical_ping("Payment Success Error", str(e))
         print("Payment Success Error:", str(e))
         return render(request, "payment_error.html", {
             "message": "Something went wrong. Contact support."
@@ -917,6 +862,7 @@ def verify_recaptcha(token):
         }
     )
     return response.json()
+
 
 # ─────────────────────────────────────────────
 # STATS

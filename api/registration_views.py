@@ -26,6 +26,7 @@ from cashfree_pg.models import CreateOrderRequest, CustomerDetails, OrderMeta
 
 from .emails import email_mpcg_pending, email_mpcg_lead, email_employee_gym, email_gym_confirmation, \
     email_athlete_confirmation, email_employee_athlete
+
 from .models import Gym, Athlete, PaymentOrder, Sponsor, GOTEmployee, MPCG_STATES, Participation, EmailLog
 
 # =========================================================
@@ -42,13 +43,12 @@ INTERNAL_CC = [REGISTRATIONS_EMAIL, OFFICE_EMAIL]
 # CASHFREE INIT
 # =========================================================
 def init_cashfree():
-    import certifi
     """
     Return a properly initialized Cashfree instance
     """
     try:
-        environment = Cashfree.SANDBOX if getattr(settings, 'CASHFREE_ENV',
-                                                  'SANDBOX') == 'SANDBOX' else Cashfree.PRODUCTION
+        environment = Cashfree.PRODUCTION if getattr(settings, 'CASHFREE_ENV',
+                                                     'PROD') == 'PROD' else Cashfree.PRODUCTION
 
         cf = Cashfree(
             XClientId=settings.CASHFREE_CLIENT_ID,
@@ -94,7 +94,7 @@ def send_got_email(subject, html_content, to_email, gym=None, athlete=None, extr
             cc=INTERNAL_CC
         )
         msg.attach_alternative(html_content, "text/html")
-        msg.send(fail_silently=False)
+        msg.send(fail_silently=True)
 
         print(f"Email sent to {to_email}, CC: {cc_list}")
 
@@ -306,14 +306,14 @@ def register_gym(request):
             })
 
     except Exception as e:
-        import datetime
-        send_satya_technical_ping(
-            "Gym Registration Error",
-            f"{str(e)} | {datetime.datetime.now()}"
-        )
+        import traceback
+
+        print("🔥 ERROR:", str(e))
+        traceback.print_exc()
+
         return JsonResponse({
             "success": False,
-            "error": "Something went wrong. Please try again."
+            "error": str(e)  # show real error temporarily
         }, status=500)
 
 
@@ -326,7 +326,6 @@ def register_gym(request):
 def initiate_participation(request):
     try:
         data = request.data
-        print(data)
 
         # ─────────────────────────────────────────
         # REQUIRED FIELDS
@@ -434,7 +433,7 @@ def initiate_participation(request):
             # athlete.got_employee = employee
             # if registration_type == "gym":
             #     athlete.gym = gym
-            #     athlete.titan_id_input = titan_id_input
+            #     athlete.titan_id = titan_id_input
             # athlete.save()
 
             # ─────────────────────────────
@@ -487,7 +486,7 @@ def initiate_participation(request):
                 athlete=athlete,
                 participation=participation,
                 order_id=order_id,
-                amount=1999,
+                amount=888,
                 status="created"
             )
 
@@ -544,12 +543,12 @@ def initiate_participation(request):
 
             req = CreateOrderRequest(
                 order_id=order_id,
-                order_amount=1999.0,
+                order_amount=888.0,
                 order_currency="INR",
                 customer_details=customer,
                 order_meta=meta,
                 order_note=f"Game of Titans — {event_leg} — "
-                            f"{f'Gym: {gym.id}' if gym else 'Individual'}",
+                           f"{f'Gym: {gym.id}' if gym else 'Individual'}",
             )
 
             cf_response = cf.PGCreateOrder(
@@ -574,7 +573,7 @@ def initiate_participation(request):
             payment_order.save()
 
             send_internal_alert(
-                subject=f"Payment Failure — {name} | ₹1999",
+                subject=f"Payment Failure — {name} | ₹1",
                 message=f"{str(e)}"
             )
 

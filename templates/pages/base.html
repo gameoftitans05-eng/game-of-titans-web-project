@@ -15,7 +15,7 @@
     <meta property="og:url" content="{% block og_url %}https://gameoftitans.in/{% endblock %}"/>
     <meta property="og:title" content="{% block og_title %}Game of Titans{% endblock %}"/>
     <meta property="og:description" content="{% block og_meta_description %}{% endblock %}"/>
-    <meta property="og:image" content="https://felikstar.com/titans-media/images/og_image.jpeg"/>
+    <meta property="og:image" content="https://felikstar.com/titans-media/images/og_logo.png"/>
     <meta property="og:image:width" content="1200"/>
     <meta property="og:image:height" content="630"/>
 
@@ -963,33 +963,33 @@ document.getElementById('gym-form')?.addEventListener('submit', async function (
 
             const gym = result.gym;
 
-showSuccessMessage(`
-    <div class="success-wrapper">
+            showSuccessMessage(`
+                <div class="success-wrapper">
 
-        <h2>Registration Received</h2>
+                    <h2>Registration Received</h2>
 
-        <p>
-            Our Regional Partner will contact you within 48 hours.
-        </p>
+                    <p>
+                        Our Regional Partner will contact you within 48 hours.
+                    </p>
 
-        <hr style="margin:30px 0;">
+                    <hr style="margin:30px 0;">
 
-        <h3>Submitted Gym Details</h3>
+                    <h3>Submitted Gym Details</h3>
 
-        <div class="gym-details">
-            <p><strong>Gym Name:</strong> ${gym.name}</p>
-            <p><strong>Contact Person:</strong> ${gym.contact_person}</p>
-            <p><strong>Email:</strong> ${gym.email}</p>
-            <p><strong>Phone:</strong> ${gym.phone}</p>
-            <p><strong>Location:</strong> ${gym.city}, ${gym.state}</p>
-            <p><strong>Address:</strong> ${gym.address}</p>
-            <p><strong>Active Members:</strong> ${gym.active_members}</p>
-            <p><strong>Expected Athletes:</strong> ${gym.expected_athletes}</p>
-            <p><strong>Event Leg:</strong> ${gym.event_leg}</p>
-        </div>
+                    <div class="gym-details">
+                        <p><strong>Gym Name:</strong> ${gym.name}</p>
+                        <p><strong>Contact Person:</strong> ${gym.contact_person}</p>
+                        <p><strong>Email:</strong> ${gym.email}</p>
+                        <p><strong>Phone:</strong> ${gym.phone}</p>
+                        <p><strong>Location:</strong> ${gym.city}, ${gym.state}</p>
+                        <p><strong>Address:</strong> ${gym.address}</p>
+                        <p><strong>Active Members:</strong> ${gym.active_members}</p>
+                        <p><strong>Expected Athletes:</strong> ${gym.expected_athletes}</p>
+                        <p><strong>Event Leg:</strong> ${gym.event_leg}</p>
+                    </div>
 
-    </div>
-`);
+                </div>
+                `);
 
             form.reset();
             return;
@@ -998,13 +998,12 @@ showSuccessMessage(`
         // ─────────────────────────────
         // SUCCESS CASE (TITAN ID)
         // ─────────────────────────────
-<!--        showSuccessMessage(`-->
-<!--            <h2>Welcome to Game of Titans</h2>-->
-<!--            <p>Your Titan Gym ID:</p>-->
-<!--            <h1 style="color:#021E8F">${result.titan_id}</h1>-->
-<!--            <p>Share this ID with your athletes.</p>-->
-<!--        `);-->
-
+        // showSuccessMessage(`
+        //     <h2>Welcome to Game of Titans</h2>
+        //     <p>Your Titan Gym ID:</p>
+        //     <h1 style="color:#021E8F">${result.titan_id}</h1>
+        //     <p>Share this ID with your athletes.</p>
+        // `);
         const gym = result.gym;
 
         showSuccessMessage(`
@@ -1056,7 +1055,6 @@ showSuccessMessage(`
         btn.innerHTML = originalText;
     }
 });
-
 
     function showError(message) {
     let box = document.getElementById('form-error');
@@ -1136,12 +1134,12 @@ showSuccessMessage(`
         ];
 
         // ===== HELPER FUNCTION =====
-<!--        function populate(select, data, placeholder = "Select") {-->
-<!--            select.innerHTML = `<option value="">${placeholder}</option>`;-->
-<!--            data.forEach(item => {-->
-<!--                select.innerHTML += `<option value="${item}">${item}</option>`;-->
-<!--            });-->
-<!--        }-->
+        // function populate(select, data, placeholder = "Select") {
+        //     select.innerHTML = `<option value="">${placeholder}</option>`;
+        //     data.forEach(item => {
+        //         select.innerHTML += `<option value="${item}">${item}</option>`;
+        //     });
+        // }
 
         function populate(select, data, placeholder = "Select") {
             select.innerHTML = `<option value="">${placeholder}</option>`;
@@ -1294,14 +1292,12 @@ showSuccessMessage(`
             const result = await response.json();
 
             if (!result.success) {
-                console.log("check: ", result.error);
-<!--                alert(result.error);-->
                 throw new Error(result.error || "Something went wrong");
             }
 
             // ===== CASHFREE INIT =====
             const cashfree = Cashfree({
-                mode: "sandbox" // change to "production" in live
+                mode: "production" // change to "production" in live
             });
 
             // ===== OPEN CHECKOUT =====
@@ -1314,7 +1310,9 @@ showSuccessMessage(`
 
         } catch (error) {
             console.error(error);
+
             alert(error.message);
+
             btn.disabled = false;
             btn.innerText = "PAY & REGISTER — ₹1,999";
         }
@@ -1784,57 +1782,57 @@ document.getElementById('sponsor-form')?.addEventListener('submit', async functi
 });
 </script>
 <script>
-    document.getElementById('sponsor-form')?.addEventListener('submit', async function(e) {
-        e.preventDefault();
+document.getElementById('sponsor-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-        const form = e.target;
-        const container = form.parentElement;
-        const btn = form.querySelector('button');
+    const form = e.target;
+    const container = form.parentElement;
+    const btn = form.querySelector('button');
 
-        btn.disabled = true;
-        btn.innerText = "Submitting...";
+    btn.disabled = true;
+    btn.innerText = "Submitting...";
 
-        try {
+    try {
 
-        console.log("formdata: ", form);
-            const formData = new FormData(form);
+    console.log("formdata: ", form);
+        const formData = new FormData(form);
 
-    <!--        // 🔐 GET RECAPTCHA TOKEN-->
-    <!--        const token = await grecaptcha.execute('6LecYslsAAAAAD6Y56g2-KhHmkWMho8ZneGZGZJ_', {action: 'submit'});-->
-    <!--        formData.append('recaptcha_token', token);-->
+<!--        // 🔐 GET RECAPTCHA TOKEN-->
+<!--        const token = await grecaptcha.execute('6LecYslsAAAAAD6Y56g2-KhHmkWMho8ZneGZGZJ_', {action: 'submit'});-->
+<!--        formData.append('recaptcha_token', token);-->
 
-            const res = await fetch('/api/v1/sponsor/create/', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken')
-                }
-            });
-
-            const data = await res.json();
-
-            if (!data.success) {
-                throw new Error(data.error || "Submission failed");
+        const res = await fetch('/api/v1/sponsor/create/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
             }
+        });
 
-            // ✅ Replace form (PDF rule)
-            container.innerHTML = `
-                <div style="text-align:center;padding:40px;">
-                    <h2 style="font-size:32px;font-weight:700;color:#5C4E3D;">
-                        Inquiry Received
-                    </h2>
-                    <p style="margin-top:10px;color:#7A7A7A;">
-                        Our partnerships team will contact you within 24–48 hours.
-                    </p>
-                </div>
-            `;
+        const data = await res.json();
 
-        } catch (err) {
-            alert(err.message);
-            btn.disabled = false;
-            btn.innerText = "Submit Inquiry";
+        if (!data.success) {
+            throw new Error(data.error || "Submission failed");
         }
-    });
+
+        // ✅ Replace form (PDF rule)
+        container.innerHTML = `
+            <div style="text-align:center;padding:40px;">
+                <h2 style="font-size:32px;font-weight:700;color:#5C4E3D;">
+                    Inquiry Received
+                </h2>
+                <p style="margin-top:10px;color:#7A7A7A;">
+                    Our partnerships team will contact you within 24–48 hours.
+                </p>
+            </div>
+        `;
+
+    } catch (err) {
+        alert(err.message);
+        btn.disabled = false;
+        btn.innerText = "Submit Inquiry";
+    }
+});
 </script>
 <script src="https://www.google.com/recaptcha/api.js?render=6LecYslsAAAAAD6Y56g2-KhHmkWMho8ZneGZGZJ_"></script>
 </html>
