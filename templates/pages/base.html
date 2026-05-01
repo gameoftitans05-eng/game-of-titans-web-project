@@ -1636,7 +1636,7 @@ document.getElementById('member-form')?.addEventListener('submit', async functio
 
         console.log("Cashfree SDK ready");
 
-        const cashfree = Cashfree({ mode: "sandbox" });
+        const cashfree = Cashfree({ mode: "production" });
 
         cashfree.checkout({
             paymentSessionId: data.payment_session_id,
