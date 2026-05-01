@@ -245,7 +245,7 @@ class PaymentOrder(models.Model):
     participation = models.ForeignKey(Participation, null=True, on_delete=models.CASCADE)
 
     order_id = models.CharField(max_length=50, unique=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2, default=1999)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=888)
 
     status = models.CharField(
         max_length=20,
