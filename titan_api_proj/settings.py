@@ -198,7 +198,10 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False  # IMPORTANT
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = 'Game of Titans<no-reply@mail.gameoftitans.in>'
+# DEFAULT_FROM_EMAIL = 'Game of Titans<no-reply@mail.gameoftitans.in>'
+
+BREVO_API_KEY = config('BREVO_API_KEY')
+DEFAULT_FROM_EMAIL = "no-reply@mail.gameoftitans.in"
 
 # ── SECURITY HEADERS — ADD THESE ─────────────────────────────────────────────
 SECURE_BROWSER_XSS_FILTER = True

@@ -8,22 +8,80 @@ from django.conf import settings
 from api.models import Participation
 from api.services.notifications import send_internal_alert
 
+import sib_api_v3_sdk
+from sib_api_v3_sdk.rest import ApiException
+
 REGISTRATIONS_EMAIL = getattr(settings, 'REGISTRATIONS_EMAIL', 'registrations@gameoftitans.in')
 OFFICE_EMAIL = getattr(settings, 'OFFICE_EMAIL', 'office@gameoftitans.in')
 ADMIN_EMAIL = getattr(settings, 'ADMIN_EMAIL', 'admin@gameoftitans.in')
 
 INTERNAL_CC = [REGISTRATIONS_EMAIL, OFFICE_EMAIL]
 
+# def send_got_email(subject, html_content, to_email, gym=None, athlete=None, extra_cc=None):
+#     from api.models import EmailLog
+#
+#     text = strip_tags(html_content)
+#
+#     cc_list = INTERNAL_CC.copy()
+#     if extra_cc:
+#         cc_list += extra_cc
+#
+#     #  CREATE LOG ENTRY (PENDING)
+#     log = EmailLog.objects.create(
+#         to_email=to_email,
+#         subject=subject,
+#         status="pending",
+#         related_gym=gym,
+#         related_athlete=athlete
+#     )
+#
+#     try:
+#         msg = EmailMultiAlternatives(
+#             subject=subject,
+#             body=text,
+#             from_email=settings.DEFAULT_FROM_EMAIL,
+#             to=[to_email],
+#             cc=cc_list
+#         )
+#
+#         msg.attach_alternative(html_content, "text/html")
+#
+#         msg.send(fail_silently=True)
+#
+#         #  MARK SUCCESS
+#         log.status = "sent"
+#         log.save()
+#
+#         print(f" Email sent → {to_email}")
+#
+#         return True
+#
+#     except Exception as e:
+#         #  MARK FAILED
+#         log.status = "failed"
+#         log.save()
+#
+#         print(" EMAIL ERROR:", str(e))
+#
+#         # Optional: alert system
+#         send_internal_alert(
+#             subject="Email Failure Alert",
+#             message=f"""
+#             Failed to send email
+#
+#             To: {to_email}
+#             Subject: {subject}
+#
+#             Error:
+#             {str(e)}
+#             """
+#         )
+#
+#         return False
+
 def send_got_email(subject, html_content, to_email, gym=None, athlete=None, extra_cc=None):
     from api.models import EmailLog
 
-    text = strip_tags(html_content)
-
-    cc_list = INTERNAL_CC.copy()
-    if extra_cc:
-        cc_list += extra_cc
-
-    #  CREATE LOG ENTRY (PENDING)
     log = EmailLog.objects.create(
         to_email=to_email,
         subject=subject,
@@ -33,46 +91,50 @@ def send_got_email(subject, html_content, to_email, gym=None, athlete=None, extr
     )
 
     try:
-        msg = EmailMultiAlternatives(
-            subject=subject,
-            body=text,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[to_email],
-            cc=cc_list
+        configuration = sib_api_v3_sdk.Configuration()
+        configuration.api_key['api-key'] = settings.BREVO_API_KEY
+
+        api_instance = sib_api_v3_sdk.TransactionalEmailsApi(
+            sib_api_v3_sdk.ApiClient(configuration)
         )
 
-        msg.attach_alternative(html_content, "text/html")
+        cc_list = []
+        if extra_cc:
+            cc_list.extend(extra_cc)
 
-        msg.send(fail_silently=True)
+        # Always include internal CC
+        cc_list.extend(INTERNAL_CC)
 
-        #  MARK SUCCESS
+        send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+            to=[{"email": to_email}],
+            cc=[{"email": email} for email in cc_list],
+            sender={"email": settings.DEFAULT_FROM_EMAIL},
+            subject=subject,
+            html_content=html_content,
+        )
+
+        api_instance.send_transac_email(send_smtp_email)
+
         log.status = "sent"
         log.save()
 
-        print(f" Email sent → {to_email}")
+        print(f"Email sent via Brevo API → {to_email}")
 
         return True
 
-    except Exception as e:
-        #  MARK FAILED
+    except ApiException as e:
         log.status = "failed"
         log.save()
 
-        print(" EMAIL ERROR:", str(e))
+        print("Brevo API Error:", str(e))
 
-        # Optional: alert system
-        send_internal_alert(
-            subject="Email Failure Alert",
-            message=f"""
-            Failed to send email
-    
-            To: {to_email}
-            Subject: {subject}
-    
-            Error:
-            {str(e)}
-            """
-        )
+        return False
+
+    except Exception as e:
+        log.status = "failed"
+        log.save()
+
+        print("Email Error:", str(e))
 
         return False
 

@@ -29,6 +29,9 @@ from .emails import email_mpcg_pending, email_mpcg_lead, email_employee_gym, ema
 
 from .models import Gym, Athlete, PaymentOrder, Sponsor, GOTEmployee, MPCG_STATES, Participation, EmailLog
 
+import sib_api_v3_sdk
+from sib_api_v3_sdk.rest import ApiException
+
 # =========================================================
 # EMAIL CONFIG (MANDATORY FROM PDF)
 # =========================================================
@@ -48,7 +51,7 @@ def init_cashfree():
     """
     try:
         environment = Cashfree.PRODUCTION if getattr(settings, 'CASHFREE_ENV',
-                                                     'PROD') == 'PROD' else Cashfree.PRODUCTION
+                                                     'PROD') == 'PROD' else Cashfree.SANDBOX
 
         cf = Cashfree(
             XClientId=settings.CASHFREE_CLIENT_ID,
@@ -111,6 +114,35 @@ def send_got_email(subject, html_content, to_email, gym=None, athlete=None, extr
         return False
 
 
+# def send_internal_alert(subject, message, gym=None, athlete=None):
+#     log = EmailLog.objects.create(
+#         to_email=",".join(INTERNAL_CC),
+#         subject=subject,
+#         status="pending",
+#         related_gym=gym,
+#         related_athlete=athlete
+#     )
+#
+#     try:
+#         send_mail(
+#             subject,
+#             message,
+#             settings.DEFAULT_FROM_EMAIL,
+#             INTERNAL_CC,
+#             fail_silently=True
+#         )
+#
+#         log.status = "sent"
+#         log.save()
+#
+#         return True
+#
+#     except Exception as e:
+#         log.status = "failed"
+#         log.save()
+#
+#         print("Internal alert error:", str(e))
+#         return False
 def send_internal_alert(subject, message, gym=None, athlete=None):
     log = EmailLog.objects.create(
         to_email=",".join(INTERNAL_CC),
@@ -121,18 +153,35 @@ def send_internal_alert(subject, message, gym=None, athlete=None):
     )
 
     try:
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            INTERNAL_CC,
-            fail_silently=True
+        configuration = sib_api_v3_sdk.Configuration()
+        configuration.api_key['api-key'] = settings.BREVO_API_KEY
+
+        api_instance = sib_api_v3_sdk.TransactionalEmailsApi(
+            sib_api_v3_sdk.ApiClient(configuration)
         )
+
+        send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+            to=[{"email": email} for email in INTERNAL_CC],
+            sender={"email": settings.DEFAULT_FROM_EMAIL},
+            subject=subject,
+            text_content=message,
+        )
+
+        api_instance.send_transac_email(send_smtp_email)
 
         log.status = "sent"
         log.save()
 
+        print("Internal alert sent")
+
         return True
+
+    except ApiException as e:
+        log.status = "failed"
+        log.save()
+
+        print("Brevo API Error:", str(e))
+        return False
 
     except Exception as e:
         log.status = "failed"
@@ -142,18 +191,18 @@ def send_internal_alert(subject, message, gym=None, athlete=None):
         return False
 
 
-def send_satya_technical_ping(error_type, error_msg=None):
-    try:
-        send_mail(
-            "GOT SYSTEM ERROR",
-            f"Type: {error_type}\nTime: {datetime.datetime.now()} \nMessage: {error_msg}",
-            settings.DEFAULT_FROM_EMAIL,
-            [ADMIN_EMAIL],
-            fail_silently=True
-        )
-        return True
-    except Exception:
-        return False
+# def send_satya_technical_ping(error_type, error_msg=None):
+#     try:
+#         send_mail(
+#             "GOT SYSTEM ERROR",
+#             f"Type: {error_type}\nTime: {datetime.datetime.now()} \nMessage: {error_msg}",
+#             settings.DEFAULT_FROM_EMAIL,
+#             [ADMIN_EMAIL],
+#             fail_silently=True
+#         )
+#         return True
+#     except Exception:
+#         return False
 
 
 # =========================================================
@@ -162,6 +211,39 @@ def send_satya_technical_ping(error_type, error_msg=None):
 # ─────────────────────────────────────────────
 # GYM REGISTRATION (PRODUCTION READY)
 # ─────────────────────────────────────────────
+def send_satya_technical_ping(error_type, error_msg=None):
+    try:
+        configuration = sib_api_v3_sdk.Configuration()
+        configuration.api_key['api-key'] = settings.BREVO_API_KEY
+
+        api_instance = sib_api_v3_sdk.TransactionalEmailsApi(
+            sib_api_v3_sdk.ApiClient(configuration)
+        )
+
+        message = f"""
+                Type: {error_type}
+                Time: {datetime.datetime.now()}
+                Message: {error_msg}
+                """
+
+        send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+            to=[{"email": ADMIN_EMAIL}],
+            sender={"email": settings.DEFAULT_FROM_EMAIL},
+            subject="GOT SYSTEM ERROR",
+            text_content=message,
+        )
+
+        api_instance.send_transac_email(send_smtp_email)
+
+        print("Technical alert sent")
+
+        return True
+
+    except Exception as e:
+        print("Technical alert failed:", str(e))
+        return False
+
+
 @csrf_exempt
 @require_POST
 def register_gym(request):
