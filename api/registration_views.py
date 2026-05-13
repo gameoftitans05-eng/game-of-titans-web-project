@@ -568,7 +568,7 @@ def initiate_participation(request):
                 athlete=athlete,
                 participation=participation,
                 order_id=order_id,
-                amount=888,
+                amount=999,
                 status="created"
             )
 
@@ -625,7 +625,7 @@ def initiate_participation(request):
 
             req = CreateOrderRequest(
                 order_id=order_id,
-                order_amount=888.0,
+                order_amount=999.0,
                 order_currency="INR",
                 customer_details=customer,
                 order_meta=meta,

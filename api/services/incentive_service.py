@@ -20,7 +20,7 @@ def calculate_weekly_summary():
 
     total = qs.count()
 
-    gross = total * 888
+    gross = total * 999
     gateway = total * 40
     incentive_budget = total * 700
     net = gross - gateway - incentive_budget
